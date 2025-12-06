@@ -6,31 +6,108 @@ import { useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import { toast } from "@/hooks/use-toast";
 
+// Helper functions for mock user storage
+const getRegisteredUsers = (): Record<string, { name: string; password: string; studentId: string }> => {
+  const users = localStorage.getItem("quickbite_users");
+  return users ? JSON.parse(users) : {};
+};
+
+const saveUser = (email: string, name: string, password: string, studentId: string) => {
+  const users = getRegisteredUsers();
+  users[email.toLowerCase()] = { name, password, studentId };
+  localStorage.setItem("quickbite_users", JSON.stringify(users));
+};
+
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [studentId, setStudentId] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { login } = useApp();
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setIsLoading(true);
+
+    const normalizedEmail = email.toLowerCase().trim();
+    const users = getRegisteredUsers();
+
     if (isLogin) {
-      if (email && password) {
-        login(email.split("@")[0]);
-        toast({ title: "Welcome back!", description: "You've been logged in successfully" });
-        navigate("/");
+      // Check if user exists
+      const existingUser = users[normalizedEmail];
+      
+      if (!existingUser) {
+        setIsLoading(false);
+        toast({ 
+          title: "Account not found", 
+          description: "No account exists with this email. Please sign up first.",
+          variant: "destructive"
+        });
+        setIsLogin(false); // Switch to signup mode
+        return;
       }
+
+      // Check password
+      if (existingUser.password !== password) {
+        setIsLoading(false);
+        toast({ 
+          title: "Invalid password", 
+          description: "The password you entered is incorrect.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Successful login
+      login(existingUser.name);
+      toast({ title: "Welcome back!", description: "You've been logged in successfully" });
+      navigate("/");
     } else {
-      if (name && email && password && studentId) {
-        login(name);
-        toast({ title: "Account created!", description: "Welcome to QuickBite" });
-        navigate("/");
+      // Signup flow
+      if (!name || !email || !password || !studentId) {
+        setIsLoading(false);
+        toast({ 
+          title: "Missing information", 
+          description: "Please fill in all fields.",
+          variant: "destructive"
+        });
+        return;
       }
+
+      // Check if user already exists
+      if (users[normalizedEmail]) {
+        setIsLoading(false);
+        toast({ 
+          title: "Account already exists", 
+          description: "An account with this email already exists. Please sign in.",
+          variant: "destructive"
+        });
+        setIsLogin(true); // Switch to login mode
+        return;
+      }
+
+      // Password validation
+      if (password.length < 6) {
+        setIsLoading(false);
+        toast({ 
+          title: "Weak password", 
+          description: "Password must be at least 6 characters long.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Save new user and login
+      saveUser(normalizedEmail, name, password, studentId);
+      login(name);
+      toast({ title: "Account created!", description: "Welcome to QuickBite" });
+      navigate("/");
     }
+    
+    setIsLoading(false);
   };
 
   return (
@@ -130,8 +207,8 @@ const AuthPage = () => {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full" size="lg">
-                {isLogin ? "Sign In" : "Create Account"}
+              <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+                {isLoading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
               </Button>
             </form>
 
