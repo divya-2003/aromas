@@ -8,9 +8,11 @@ interface AppContextType {
   isAuthenticated: boolean;
   userName: string;
   userEmail: string;
+  specialInstructions: string;
   addToCart: (item: MenuItem, quantity?: number, customizations?: string[], specialInstructions?: string) => void;
   removeFromCart: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
+  updateSpecialInstructions: (instructions: string) => void;
   clearCart: () => void;
   placeOrder: () => Order | null;
   login: (name: string, email: string) => void;
@@ -27,12 +29,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
+  const [specialInstructions, setSpecialInstructions] = useState("");
 
   const addToCart = (
     item: MenuItem, 
     quantity = 1, 
     customizations: string[] = [], 
-    specialInstructions = ""
+    itemSpecialInstructions = ""
   ) => {
     setCart((prev) => {
       const existingItem = prev.find((i) => i.id === item.id);
@@ -41,7 +44,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           i.id === item.id ? { ...i, quantity: i.quantity + quantity } : i
         );
       }
-      return [...prev, { ...item, quantity, customizations, specialInstructions }];
+      return [...prev, { ...item, quantity, customizations, specialInstructions: itemSpecialInstructions }];
     });
     toast({
       title: "Added to cart",
@@ -63,7 +66,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     );
   };
 
-  const clearCart = () => setCart([]);
+  const updateSpecialInstructions = (instructions: string) => {
+    setSpecialInstructions(instructions);
+  };
+
+  const clearCart = () => {
+    setCart([]);
+    setSpecialInstructions("");
+  };
 
   const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -71,9 +81,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const placeOrder = (): Order | null => {
     if (cart.length === 0) return null;
 
-    const maxPrepTime = Math.max(...cart.map((item) => item.preparationTime));
+    // Default preparation time of 15 minutes
     const estimatedReadyTime = new Date();
-    estimatedReadyTime.setMinutes(estimatedReadyTime.getMinutes() + maxPrepTime);
+    estimatedReadyTime.setMinutes(estimatedReadyTime.getMinutes() + 15);
 
     const newOrder: Order = {
       id: `ORD-${Date.now()}`,
@@ -82,6 +92,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       status: "placed",
       placedAt: new Date(),
       estimatedReadyTime,
+      specialInstructions,
     };
 
     setOrders((prev) => [newOrder, ...prev]);
@@ -127,9 +138,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
         isAuthenticated,
         userName,
         userEmail,
+        specialInstructions,
         addToCart,
         removeFromCart,
         updateQuantity,
+        updateSpecialInstructions,
         clearCart,
         placeOrder,
         login,

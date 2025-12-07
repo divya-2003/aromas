@@ -6,8 +6,7 @@ export interface MenuItem {
   category: string;
   image: string;
   isVeg: boolean;
-  isPopular: boolean;
-  preparationTime: number;
+  isBestSeller?: boolean;
 }
 
 export interface CartItem extends MenuItem {
@@ -23,6 +22,7 @@ export interface Order {
   status: OrderStatus;
   placedAt: Date;
   estimatedReadyTime: Date;
+  specialInstructions?: string;
 }
 
 export type OrderStatus = 
@@ -35,5 +35,4 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  studentId: string;
 }

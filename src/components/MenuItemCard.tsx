@@ -1,15 +1,14 @@
 import { motion } from "framer-motion";
 import { MenuItem } from "@/types/menu";
 import { Button } from "@/components/ui/button";
-import { Plus, Clock, Flame } from "lucide-react";
+import { Plus, Award } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 
 interface MenuItemCardProps {
   item: MenuItem;
-  onCustomize: (item: MenuItem) => void;
 }
 
-export function MenuItemCard({ item, onCustomize }: MenuItemCardProps) {
+export function MenuItemCard({ item }: MenuItemCardProps) {
   const { addToCart } = useApp();
 
   return (
@@ -44,10 +43,10 @@ export function MenuItemCard({ item, onCustomize }: MenuItemCardProps) {
               }`} 
             />
           </span>
-          {item.isPopular && (
-            <span className="flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">
-              <Flame className="h-3 w-3" />
-              Popular
+          {item.isBestSeller && (
+            <span className="flex items-center gap-1 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white">
+              <Award className="h-3 w-3" />
+              Best Seller
             </span>
           )}
         </div>
@@ -67,29 +66,14 @@ export function MenuItemCard({ item, onCustomize }: MenuItemCardProps) {
           {item.description}
         </p>
 
-        <div className="mt-3 flex items-center justify-between">
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Clock className="h-3 w-3" />
-            <span>{item.preparationTime} min</span>
-          </div>
-
-          <div className="flex gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onCustomize(item)}
-              className="h-8 px-3 text-xs"
-            >
-              Customize
-            </Button>
-            <Button
-              size="icon"
-              onClick={() => addToCart(item)}
-              className="h-8 w-8"
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
+        <div className="mt-3 flex items-center justify-end">
+          <Button
+            size="icon"
+            onClick={() => addToCart(item)}
+            className="h-8 w-8"
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
         </div>
       </div>
     </motion.div>

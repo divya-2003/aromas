@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, X, Plus, Minus, Trash2 } from "lucide-react";
+import { ShoppingBag, X, Plus, Minus, Trash2, FileText } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router-dom";
 
 interface CartSheetProps {
@@ -10,12 +12,19 @@ interface CartSheetProps {
 }
 
 export function CartSheet({ isOpen, onClose }: CartSheetProps) {
-  const { cart, cartTotal, updateQuantity, removeFromCart } = useApp();
+  const { cart, cartTotal, updateQuantity, removeFromCart, updateSpecialInstructions } = useApp();
   const navigate = useNavigate();
+  const [showInstructions, setShowInstructions] = useState(false);
+  const [instructions, setInstructions] = useState("");
 
   const handleCheckout = () => {
     onClose();
     navigate("/checkout");
+  };
+
+  const handleSaveInstructions = () => {
+    updateSpecialInstructions(instructions);
+    setShowInstructions(false);
   };
 
   return (
@@ -133,10 +142,51 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
               )}
             </div>
 
-            {/* Footer */}
+            {/* Special Instructions & Footer */}
             {cart.length > 0 && (
-              <div className="border-t border-border p-4">
-                <div className="mb-4 flex items-center justify-between">
+              <div className="border-t border-border p-4 space-y-4">
+                {/* Special Instructions */}
+                <div>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2"
+                    onClick={() => setShowInstructions(!showInstructions)}
+                  >
+                    <FileText className="h-4 w-4" />
+                    {instructions ? "Edit Special Instructions" : "Add Special Instructions"}
+                  </Button>
+                  
+                  <AnimatePresence>
+                    {showInstructions && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="mt-3 space-y-2">
+                          <Textarea
+                            placeholder="E.g., Less spicy, no onions, extra sauce..."
+                            value={instructions}
+                            onChange={(e) => setInstructions(e.target.value)}
+                            className="min-h-[80px]"
+                          />
+                          <Button size="sm" onClick={handleSaveInstructions}>
+                            Save Instructions
+                          </Button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  
+                  {instructions && !showInstructions && (
+                    <p className="mt-2 text-xs text-muted-foreground italic">
+                      "{instructions}"
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Total</span>
                   <span className="text-2xl font-bold">₹{cartTotal}</span>
                 </div>

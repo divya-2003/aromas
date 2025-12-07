@@ -1,25 +1,21 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Search, ShoppingBag, Clock } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, ShoppingBag, X } from "lucide-react";
 import { menuItems, menuCategories } from "@/data/menu";
-import { MenuItem } from "@/types/menu";
 import { MenuItemCard } from "@/components/MenuItemCard";
 import { CategoryTabs } from "@/components/CategoryTabs";
 import { CartSheet } from "@/components/CartSheet";
 import { FloatingCartButton } from "@/components/FloatingCartButton";
-import { CustomizeModal } from "@/components/CustomizeModal";
 import { ProfileDropdown } from "@/components/ProfileDropdown";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/context/AppContext";
-import { useNavigate } from "react-router-dom";
 
 const MenuPage = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [customizeItem, setCustomizeItem] = useState<MenuItem | null>(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { cartItemCount, isAuthenticated, userName } = useApp();
-  const navigate = useNavigate();
 
   const filteredItems = menuItems.filter((item) => {
     const matchesCategory = activeCategory === "all" || item.category === activeCategory;
@@ -49,9 +45,9 @@ const MenuPage = () => {
               <Button
                 variant="icon"
                 size="icon"
-                onClick={() => navigate("/orders")}
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
               >
-                <Clock className="h-5 w-5" />
+                <Search className="h-5 w-5" />
               </Button>
               <Button
                 variant="icon"
@@ -70,19 +66,37 @@ const MenuPage = () => {
             </div>
           </div>
 
-          {/* Search */}
-          <div className="mt-4">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search for dishes..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-xl border border-border bg-card py-3 pl-12 pr-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
-          </div>
+          {/* Search (Collapsible) */}
+          <AnimatePresence>
+            {isSearchOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden"
+              >
+                <div className="mt-4 relative">
+                  <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="text"
+                    placeholder="Search for dishes..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full rounded-xl border border-border bg-card py-3 pl-12 pr-10 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                    autoFocus
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Category Tabs */}
           <div className="mt-4">
@@ -105,7 +119,7 @@ const MenuPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
             >
-              <MenuItemCard item={item} onCustomize={setCustomizeItem} />
+              <MenuItemCard item={item} />
             </motion.div>
           ))}
         </div>
@@ -123,13 +137,6 @@ const MenuPage = () => {
 
       {/* Cart Sheet */}
       <CartSheet isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-
-      {/* Customize Modal */}
-      <CustomizeModal
-        item={customizeItem}
-        isOpen={customizeItem !== null}
-        onClose={() => setCustomizeItem(null)}
-      />
     </div>
   );
 };
