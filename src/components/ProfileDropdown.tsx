@@ -1,4 +1,4 @@
-import { User, Mail, GraduationCap, LogOut } from "lucide-react";
+import { User, Mail, GraduationCap, LogOut, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -80,6 +80,20 @@ export const ProfileDropdown = () => {
               <p className="text-sm font-medium text-foreground">Verified Student</p>
             </div>
           </div>
+
+          {/* Your Orders */}
+          <button
+            onClick={() => navigate("/orders")}
+            className="flex w-full items-center gap-3 rounded-lg p-2 hover:bg-muted transition-colors"
+          >
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+              <ClipboardList className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <div className="text-left">
+              <p className="text-sm font-medium text-foreground">Your Orders</p>
+              <p className="text-xs text-muted-foreground">View order history</p>
+            </div>
+          </button>
         </div>
 
         {/* Logout Button */}
