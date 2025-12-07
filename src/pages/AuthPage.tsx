@@ -1,20 +1,20 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, User, Mail, Lock, GraduationCap } from "lucide-react";
+import { ArrowLeft, User, Mail, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import { toast } from "@/hooks/use-toast";
 
 // Helper functions for mock user storage
-const getRegisteredUsers = (): Record<string, { name: string; password: string; studentId: string }> => {
+const getRegisteredUsers = (): Record<string, { name: string; password: string }> => {
   const users = localStorage.getItem("quickbite_users");
   return users ? JSON.parse(users) : {};
 };
 
-const saveUser = (email: string, name: string, password: string, studentId: string) => {
+const saveUser = (email: string, name: string, password: string) => {
   const users = getRegisteredUsers();
-  users[email.toLowerCase()] = { name, password, studentId };
+  users[email.toLowerCase()] = { name, password };
   localStorage.setItem("quickbite_users", JSON.stringify(users));
 };
 
@@ -23,7 +23,6 @@ const AuthPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [studentId, setStudentId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useApp();
   const navigate = useNavigate();
@@ -62,12 +61,12 @@ const AuthPage = () => {
       }
 
       // Successful login
-      login(existingUser.name);
+      login(existingUser.name, normalizedEmail);
       toast({ title: "Welcome back!", description: "You've been logged in successfully" });
       navigate("/");
     } else {
       // Signup flow
-      if (!name || !email || !password || !studentId) {
+      if (!name || !email || !password) {
         setIsLoading(false);
         toast({ 
           title: "Missing information", 
@@ -101,8 +100,8 @@ const AuthPage = () => {
       }
 
       // Save new user and login
-      saveUser(normalizedEmail, name, password, studentId);
-      login(name);
+      saveUser(normalizedEmail, name, password);
+      login(name, normalizedEmail);
       toast({ title: "Account created!", description: "Welcome to QuickBite" });
       navigate("/");
     }
@@ -170,25 +169,6 @@ const AuthPage = () => {
                   />
                 </div>
               </div>
-
-              {!isLogin && (
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-foreground">
-                    Student ID
-                  </label>
-                  <div className="relative">
-                    <GraduationCap className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-                    <input
-                      type="text"
-                      value={studentId}
-                      onChange={(e) => setStudentId(e.target.value)}
-                      placeholder="e.g., 2024CS001"
-                      className="w-full rounded-xl border border-border bg-background py-3 pl-10 pr-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                      required
-                    />
-                  </div>
-                </div>
-              )}
 
               <div>
                 <label className="mb-1 block text-sm font-medium text-foreground">

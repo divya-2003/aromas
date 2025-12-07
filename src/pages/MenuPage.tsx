@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Search, ShoppingBag, User, Clock } from "lucide-react";
+import { Search, ShoppingBag, Clock } from "lucide-react";
 import { menuItems, menuCategories } from "@/data/menu";
 import { MenuItem } from "@/types/menu";
 import { MenuItemCard } from "@/components/MenuItemCard";
@@ -8,6 +8,7 @@ import { CategoryTabs } from "@/components/CategoryTabs";
 import { CartSheet } from "@/components/CartSheet";
 import { FloatingCartButton } from "@/components/FloatingCartButton";
 import { CustomizeModal } from "@/components/CustomizeModal";
+import { ProfileDropdown } from "@/components/ProfileDropdown";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/context/AppContext";
 import { useNavigate } from "react-router-dom";
@@ -65,13 +66,7 @@ const MenuPage = () => {
                   </span>
                 )}
               </Button>
-              <Button
-                variant="icon"
-                size="icon"
-                onClick={() => navigate(isAuthenticated ? "/profile" : "/auth")}
-              >
-                <User className="h-5 w-5" />
-              </Button>
+              <ProfileDropdown />
             </div>
           </div>
 

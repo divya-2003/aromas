@@ -7,12 +7,13 @@ interface AppContextType {
   orders: Order[];
   isAuthenticated: boolean;
   userName: string;
+  userEmail: string;
   addToCart: (item: MenuItem, quantity?: number, customizations?: string[], specialInstructions?: string) => void;
   removeFromCart: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
   placeOrder: () => Order | null;
-  login: (name: string) => void;
+  login: (name: string, email: string) => void;
   logout: () => void;
   cartTotal: number;
   cartItemCount: number;
@@ -25,6 +26,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
 
   const addToCart = (
     item: MenuItem, 
@@ -105,14 +107,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return newOrder;
   };
 
-  const login = (name: string) => {
+  const login = (name: string, email: string) => {
     setIsAuthenticated(true);
     setUserName(name);
+    setUserEmail(email);
   };
 
   const logout = () => {
     setIsAuthenticated(false);
     setUserName("");
+    setUserEmail("");
   };
 
   return (
@@ -122,6 +126,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         orders,
         isAuthenticated,
         userName,
+        userEmail,
         addToCart,
         removeFromCart,
         updateQuantity,
