@@ -27,7 +27,7 @@ export const ProfileDropdown = () => {
   const handleLogout = () => {
     logout();
     toast({ title: "Logged out", description: "You've been logged out successfully" });
-    navigate("/");
+    navigate("/auth");
   };
 
   if (!isAuthenticated) {
