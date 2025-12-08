@@ -99,11 +99,11 @@ const AuthPage = () => {
         return;
       }
 
-      // Save new user and login
+      // Save new user (don't auto-login)
       saveUser(normalizedEmail, name, password);
-      login(name, normalizedEmail);
-      toast({ title: "Account created!", description: "Welcome to QuickBite" });
-      navigate("/");
+      toast({ title: "Account created!", description: "Please sign in to continue" });
+      setIsLogin(true); // Switch to login mode
+      setPassword(""); // Clear password for security
     }
     
     setIsLoading(false);
@@ -206,19 +206,6 @@ const AuthPage = () => {
             </div>
           </div>
 
-          {/* Features */}
-          <div className="mt-8 grid grid-cols-3 gap-4 text-center">
-            {[
-              { icon: "⚡", label: "Fast Orders" },
-              { icon: "📍", label: "Campus Delivery" },
-              { icon: "💳", label: "Easy Payments" },
-            ].map((feature) => (
-              <div key={feature.label} className="rounded-xl bg-card p-4 shadow-card">
-                <span className="text-2xl">{feature.icon}</span>
-                <p className="mt-1 text-xs font-medium text-muted-foreground">{feature.label}</p>
-              </div>
-            ))}
-          </div>
         </motion.div>
       </div>
     </div>
