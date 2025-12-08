@@ -20,7 +20,7 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
       className="group relative overflow-hidden rounded-2xl bg-card shadow-card"
     >
       {/* Image */}
-      <div className="relative h-36 overflow-hidden">
+      <div className="relative aspect-square overflow-hidden">
         <img
           src={item.image}
           alt={item.name}

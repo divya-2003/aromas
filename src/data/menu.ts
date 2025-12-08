@@ -3,14 +3,18 @@ import butterChicken from "@/assets/butter-chicken.jpg";
 import paneerTikka from "@/assets/paneer-tikka.jpg";
 import vegBiryani from "@/assets/veg-biryani.jpg";
 import chickenBiryani from "@/assets/chicken-biryani.jpg";
-import samosa from "@/assets/samosa.jpg";
+import samosaNew from "@/assets/samosa-new.jpg";
 import frenchFries from "@/assets/french-fries.jpg";
 import chickenMomos from "@/assets/chicken-momos.jpg";
-import masalaChai from "@/assets/masala-chai.jpg";
+import masalaChaiNew from "@/assets/masala-chai-new.jpg";
 import coldCoffee from "@/assets/cold-coffee.jpg";
 import limeSoda from "@/assets/lime-soda.jpg";
 import gulabJamun from "@/assets/gulab-jamun.jpg";
 import iceCreamSundae from "@/assets/ice-cream-sundae.jpg";
+import whiteSaucePasta from "@/assets/white-sauce-pasta.jpg";
+import redSaucePasta from "@/assets/red-sauce-pasta.jpg";
+import pinkSaucePasta from "@/assets/pink-sauce-pasta.jpg";
+import paneerButterMasala from "@/assets/paneer-butter-masala.jpg";
 
 export const menuCategories = [
   { id: "all", name: "All", icon: "🍽️" },
@@ -41,6 +45,15 @@ export const menuItems: MenuItem[] = [
   },
   {
     id: "3",
+    name: "Paneer Butter Masala",
+    description: "Soft paneer cubes in rich, creamy tomato gravy with butter and cream",
+    price: 110,
+    category: "main",
+    image: paneerButterMasala,
+    isVeg: true,
+  },
+  {
+    id: "4",
     name: "Veg Biryani",
     description: "Fragrant basmati rice layered with mixed vegetables and spices",
     price: 90,
@@ -49,7 +62,7 @@ export const menuItems: MenuItem[] = [
     isVeg: true,
   },
   {
-    id: "4",
+    id: "5",
     name: "Chicken Biryani",
     description: "Aromatic basmati rice with tender chicken and traditional spices",
     price: 130,
@@ -58,44 +71,44 @@ export const menuItems: MenuItem[] = [
     isVeg: false,
   },
   {
-    id: "5",
+    id: "6",
     name: "White Sauce Pasta",
     description: "Creamy pasta in rich white sauce with herbs and parmesan",
     price: 85,
     category: "main",
-    image: paneerTikka, // placeholder image
+    image: whiteSaucePasta,
     isVeg: true,
     isBestSeller: true,
   },
   {
-    id: "6",
+    id: "7",
     name: "Red Sauce Pasta",
     description: "Classic pasta in tangy tomato sauce with Italian herbs",
     price: 80,
     category: "main",
-    image: butterChicken, // placeholder image
-    isVeg: true,
-  },
-  {
-    id: "7",
-    name: "Pink Sauce Pasta",
-    description: "Perfect blend of creamy white and tangy red sauce pasta",
-    price: 90,
-    category: "main",
-    image: vegBiryani, // placeholder image
+    image: redSaucePasta,
     isVeg: true,
   },
   {
     id: "8",
-    name: "Samosa (2 pcs)",
-    description: "Crispy pastry filled with spiced potatoes and peas",
-    price: 30,
-    category: "snacks",
-    image: samosa,
+    name: "Pink Sauce Pasta",
+    description: "Perfect blend of creamy white and tangy red sauce pasta",
+    price: 90,
+    category: "main",
+    image: pinkSaucePasta,
     isVeg: true,
   },
   {
     id: "9",
+    name: "Samosa (2 pcs)",
+    description: "Crispy pastry filled with spiced potatoes and peas",
+    price: 30,
+    category: "snacks",
+    image: samosaNew,
+    isVeg: true,
+  },
+  {
+    id: "10",
     name: "French Fries",
     description: "Golden crispy fries with seasoning and dipping sauce",
     price: 50,
@@ -104,7 +117,7 @@ export const menuItems: MenuItem[] = [
     isVeg: true,
   },
   {
-    id: "10",
+    id: "11",
     name: "Chicken Momos (6 pcs)",
     description: "Steamed dumplings filled with spiced chicken, served with chutney",
     price: 60,
@@ -113,16 +126,16 @@ export const menuItems: MenuItem[] = [
     isVeg: false,
   },
   {
-    id: "11",
+    id: "12",
     name: "Masala Chai",
     description: "Traditional Indian spiced tea with milk",
     price: 20,
     category: "beverages",
-    image: masalaChai,
+    image: masalaChaiNew,
     isVeg: true,
   },
   {
-    id: "12",
+    id: "13",
     name: "Cold Coffee",
     description: "Refreshing iced coffee blended with milk and cream",
     price: 50,
@@ -131,7 +144,7 @@ export const menuItems: MenuItem[] = [
     isVeg: true,
   },
   {
-    id: "13",
+    id: "14",
     name: "Fresh Lime Soda",
     description: "Tangy lime with soda, choice of sweet or salted",
     price: 35,
@@ -140,7 +153,7 @@ export const menuItems: MenuItem[] = [
     isVeg: true,
   },
   {
-    id: "14",
+    id: "15",
     name: "Gulab Jamun (2 pcs)",
     description: "Soft milk dumplings soaked in rose-flavored sugar syrup",
     price: 40,
@@ -149,7 +162,7 @@ export const menuItems: MenuItem[] = [
     isVeg: true,
   },
   {
-    id: "15",
+    id: "16",
     name: "Ice Cream Sundae",
     description: "Vanilla ice cream with chocolate sauce and nuts",
     price: 60,

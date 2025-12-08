@@ -15,12 +15,17 @@ const MenuPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [vegFilter, setVegFilter] = useState<"all" | "veg" | "nonveg">("all");
   const { cartItemCount, isAuthenticated, userName } = useApp();
 
   const filteredItems = menuItems.filter((item) => {
     const matchesCategory = activeCategory === "all" || item.category === activeCategory;
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+    const matchesVegFilter = 
+      vegFilter === "all" || 
+      (vegFilter === "veg" && item.isVeg) || 
+      (vegFilter === "nonveg" && !item.isVeg);
+    return matchesCategory && matchesSearch && matchesVegFilter;
   });
 
   return (
@@ -106,6 +111,46 @@ const MenuPage = () => {
               onCategoryChange={setActiveCategory}
             />
           </div>
+
+          {/* Veg/Non-Veg Filter - Only show for Main Course */}
+          {activeCategory === "main" && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-4 flex gap-2"
+            >
+              <Button
+                variant={vegFilter === "all" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setVegFilter("all")}
+                className="rounded-full"
+              >
+                All
+              </Button>
+              <Button
+                variant={vegFilter === "veg" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setVegFilter("veg")}
+                className="rounded-full gap-1.5"
+              >
+                <span className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-success">
+                  <span className="h-2 w-2 rounded-full bg-success" />
+                </span>
+                Veg
+              </Button>
+              <Button
+                variant={vegFilter === "nonveg" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setVegFilter("nonveg")}
+                className="rounded-full gap-1.5"
+              >
+                <span className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-destructive">
+                  <span className="h-2 w-2 rounded-full bg-destructive" />
+                </span>
+                Non-Veg
+              </Button>
+            </motion.div>
+          )}
         </div>
       </header>
 
