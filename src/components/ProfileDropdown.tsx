@@ -107,10 +107,7 @@ export const ProfileDropdown = () => {
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Logout from your account?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  You will need to sign in again to place orders and view your order history.
-                </AlertDialogDescription>
+                <AlertDialogTitle>Log out of your Account?</AlertDialogTitle>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
