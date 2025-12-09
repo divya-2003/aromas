@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { CartItem, MenuItem, Order, OrderStatus } from "@/types/menu";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AppContextType {
   cart: CartItem[];
@@ -30,6 +31,32 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [specialInstructions, setSpecialInstructions] = useState("");
+
+  // Listen to Supabase auth state changes
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setIsAuthenticated(true);
+        setUserEmail(session.user.email || "");
+        setUserName(session.user.user_metadata?.name || session.user.email?.split("@")[0] || "");
+      } else {
+        setIsAuthenticated(false);
+        setUserName("");
+        setUserEmail("");
+      }
+    });
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setIsAuthenticated(true);
+        setUserEmail(session.user.email || "");
+        setUserName(session.user.user_metadata?.name || session.user.email?.split("@")[0] || "");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const addToCart = (
     item: MenuItem, 
@@ -124,7 +151,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setUserEmail(email);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut();
     setIsAuthenticated(false);
     setUserName("");
     setUserEmail("");
