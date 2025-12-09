@@ -5,21 +5,12 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
-// Helper functions for mock user storage
-const getRegisteredUsers = (): Record<string, { name: string; password: string }> => {
-  const users = localStorage.getItem("quickbite_users");
-  return users ? JSON.parse(users) : {};
-};
-
-const saveUser = (email: string, name: string, password: string) => {
-  const users = getRegisteredUsers();
-  users[email.toLowerCase()] = { name, password };
-  localStorage.setItem("quickbite_users", JSON.stringify(users));
-};
+type AuthMode = "signup" | "login" | "forgot-password";
 
 const AuthPage = () => {
-  const [isLogin, setIsLogin] = useState(false);
+  const [mode, setMode] = useState<AuthMode>("signup");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,86 +18,135 @@ const AuthPage = () => {
   const { login } = useApp();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     const normalizedEmail = email.toLowerCase().trim();
-    const users = getRegisteredUsers();
 
-    if (isLogin) {
-      // Check if user exists
-      const existingUser = users[normalizedEmail];
-      
-      if (!existingUser) {
-        setIsLoading(false);
-        toast({ 
-          title: "Account not found", 
-          description: "No account exists with this email. Please sign up first.",
-          variant: "destructive"
+    try {
+      if (mode === "forgot-password") {
+        const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
+          redirectTo: `${window.location.origin}/auth?mode=reset`,
         });
-        setIsLogin(false); // Switch to signup mode
-        return;
-      }
 
-      // Check password
-      if (existingUser.password !== password) {
-        setIsLoading(false);
+        if (error) throw error;
+
         toast({ 
-          title: "Invalid password", 
-          description: "The password you entered is incorrect.",
-          variant: "destructive"
+          title: "Check your email", 
+          description: "We've sent you a password reset link." 
         });
-        return;
-      }
-
-      // Successful login
-      login(existingUser.name, normalizedEmail);
-      toast({ title: "Welcome back!", description: "You've been logged in successfully" });
-      navigate("/");
-    } else {
-      // Signup flow
-      if (!name || !email || !password) {
-        setIsLoading(false);
-        toast({ 
-          title: "Missing information", 
-          description: "Please fill in all fields.",
-          variant: "destructive"
+        setMode("login");
+      } else if (mode === "login") {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: normalizedEmail,
+          password,
         });
-        return;
-      }
 
-      // Check if user already exists
-      if (users[normalizedEmail]) {
-        setIsLoading(false);
-        toast({ 
-          title: "Account already exists", 
-          description: "An account with this email already exists. Please sign in.",
-          variant: "destructive"
+        if (error) {
+          if (error.message.includes("Invalid login credentials")) {
+            toast({ 
+              title: "Account not found", 
+              description: "No account exists with this email or password is incorrect.",
+              variant: "destructive"
+            });
+          } else {
+            throw error;
+          }
+          setIsLoading(false);
+          return;
+        }
+
+        if (data.user) {
+          const userName = data.user.user_metadata?.name || normalizedEmail.split("@")[0];
+          login(userName, normalizedEmail);
+          toast({ title: "Welcome back!", description: "You've been logged in successfully" });
+          navigate("/");
+        }
+      } else {
+        // Signup
+        if (!name || !email || !password) {
+          toast({ 
+            title: "Missing information", 
+            description: "Please fill in all fields.",
+            variant: "destructive"
+          });
+          setIsLoading(false);
+          return;
+        }
+
+        if (password.length < 6) {
+          toast({ 
+            title: "Weak password", 
+            description: "Password must be at least 6 characters long.",
+            variant: "destructive"
+          });
+          setIsLoading(false);
+          return;
+        }
+
+        const { error } = await supabase.auth.signUp({
+          email: normalizedEmail,
+          password,
+          options: {
+            data: { name },
+            emailRedirectTo: `${window.location.origin}/auth`,
+          },
         });
-        setIsLogin(true); // Switch to login mode
-        return;
-      }
 
-      // Password validation
-      if (password.length < 6) {
-        setIsLoading(false);
-        toast({ 
-          title: "Weak password", 
-          description: "Password must be at least 6 characters long.",
-          variant: "destructive"
-        });
-        return;
-      }
+        if (error) {
+          if (error.message.includes("already registered")) {
+            toast({ 
+              title: "Account already exists", 
+              description: "An account with this email already exists. Please sign in.",
+              variant: "destructive"
+            });
+            setMode("login");
+          } else {
+            throw error;
+          }
+          setIsLoading(false);
+          return;
+        }
 
-      // Save new user (don't auto-login)
-      saveUser(normalizedEmail, name, password);
-      toast({ title: "Account created!", description: "Please sign in to continue" });
-      setIsLogin(true); // Switch to login mode
-      setPassword(""); // Clear password for security
+        toast({ title: "Account created!", description: "Please sign in to continue" });
+        setMode("login");
+        setPassword("");
+      }
+    } catch (error: any) {
+      toast({ 
+        title: "Error", 
+        description: error.message || "Something went wrong",
+        variant: "destructive"
+      });
     }
     
     setIsLoading(false);
+  };
+
+  const getTitle = () => {
+    switch (mode) {
+      case "forgot-password": return "Reset Password";
+      case "login": return "Welcome back!";
+      default: return "Join QuickBite";
+    }
+  };
+
+  const getSubtitle = () => {
+    switch (mode) {
+      case "forgot-password": return "Enter your email to receive a reset link";
+      case "login": return "Let's get you fed.";
+      default: return "Skip the queue";
+    }
+  };
+
+  const getButtonText = () => {
+    if (isLoading) return "Please wait...";
+    switch (mode) {
+      case "forgot-password": return "Send Reset Link";
+      case "login": return "Sign In";
+      default: return "Create Account";
+    }
   };
 
   return (
@@ -126,15 +166,15 @@ const AuthPage = () => {
           {/* Logo */}
           <div className="mb-8 text-center">
             <h1 className="text-4xl font-bold text-foreground">QuickBite 🍔</h1>
-            <p className="mt-2 text-muted-foreground">
-              {isLogin ? "Welcome back! Let's get you fed." : "Join QuickBite and skip the queue"}
-            </p>
+            <p className="mt-2 text-muted-foreground">{getSubtitle()}</p>
           </div>
 
           {/* Form */}
           <div className="rounded-2xl bg-card p-6 shadow-card">
+            <h2 className="text-xl font-semibold text-foreground mb-4">{getTitle()}</h2>
+            
             <form onSubmit={handleSubmit} className="space-y-4">
-              {!isLogin && (
+              {mode === "signup" && (
                 <div>
                   <label className="mb-1 block text-sm font-medium text-foreground">
                     Full Name
@@ -170,39 +210,66 @@ const AuthPage = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="mb-1 block text-sm font-medium text-foreground">
-                  Password
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full rounded-xl border border-border bg-background py-3 pl-10 pr-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                    required
-                  />
+              {mode !== "forgot-password" && (
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-foreground">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full rounded-xl border border-border bg-background py-3 pl-10 pr-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {mode === "login" && (
+                <div className="text-right">
+                  <button
+                    type="button"
+                    onClick={() => setMode("forgot-password")}
+                    className="text-sm text-primary hover:underline"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+              )}
 
               <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-                {isLoading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
+                {getButtonText()}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-sm text-muted-foreground">
-                {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-                <button
-                  type="button"
-                  onClick={() => setIsLogin(!isLogin)}
-                  className="font-semibold text-primary hover:underline"
-                >
-                  {isLogin ? "Sign Up" : "Login"}
-                </button>
-              </p>
+              {mode === "forgot-password" ? (
+                <p className="text-sm text-muted-foreground">
+                  Remember your password?{" "}
+                  <button
+                    type="button"
+                    onClick={() => setMode("login")}
+                    className="font-semibold text-primary hover:underline"
+                  >
+                    Back to Login
+                  </button>
+                </p>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  {mode === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
+                  <button
+                    type="button"
+                    onClick={() => setMode(mode === "login" ? "signup" : "login")}
+                    className="font-semibold text-primary hover:underline"
+                  >
+                    {mode === "login" ? "Sign Up" : "Login"}
+                  </button>
+                </p>
+              )}
             </div>
           </div>
 
