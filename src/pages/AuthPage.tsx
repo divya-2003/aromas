@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 // Helper functions for mock user storage
 const getRegisteredUsers = (): Record<string, { name: string; password: string }> => {
@@ -205,8 +206,20 @@ const AuthPage = () => {
                 variant="outline"
                 className="w-full"
                 size="lg"
-                onClick={() => {
-                  toast({ title: "Google Auth", description: "Google authentication coming soon!" });
+                onClick={async () => {
+                  const { error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                      redirectTo: `${window.location.origin}/`
+                    }
+                  });
+                  if (error) {
+                    toast({ 
+                      title: "Google sign-in failed", 
+                      description: error.message,
+                      variant: "destructive"
+                    });
+                  }
                 }}
               >
                 <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
