@@ -73,10 +73,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
       return [...prev, { ...item, quantity, customizations, specialInstructions: itemSpecialInstructions }];
     });
-    toast({
-      title: "Added to cart",
-      description: `${item.name} has been added to your cart`,
-    });
   };
 
   const removeFromCart = (itemId: string) => {
