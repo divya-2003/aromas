@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 type AuthMode = "signup" | "login" | "forgot-password";
 
 const AuthPage = () => {
-  const [mode, setMode] = useState<AuthMode>("signup");
+  const [mode, setMode] = useState<AuthMode>("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
