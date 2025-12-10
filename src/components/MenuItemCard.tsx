@@ -64,42 +64,48 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
 
       {/* Content */}
       <div className="p-4">
-        <h3 className="font-semibold text-foreground">{item.name}</h3>
-        <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-          {item.description}
-        </p>
-
-        <div className="mt-3 flex items-center justify-end">
-          {quantity > 0 ? (
-            <div className="flex items-center gap-2">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1">
+            <h3 className="font-semibold text-foreground">{item.name}</h3>
+            <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+              {item.description}
+            </p>
+          </div>
+          
+          {/* Cart controls */}
+          <div className="flex-shrink-0">
+            {quantity > 0 ? (
+              <div className="flex items-center gap-1">
+                <Button
+                  size="icon"
+                  variant="outline"
+                  onClick={() => updateQuantity(item.id, quantity - 1)}
+                  className="h-7 w-7"
+                >
+                  <Minus className="h-3 w-3" />
+                </Button>
+                <span className="w-5 text-center text-sm font-semibold text-foreground">
+                  {quantity}
+                </span>
+                <Button
+                  size="icon"
+                  onClick={() => addToCart(item)}
+                  className="h-7 w-7"
+                >
+                  <Plus className="h-3 w-3" />
+                </Button>
+              </div>
+            ) : (
               <Button
-                size="icon"
-                variant="outline"
-                onClick={() => updateQuantity(item.id, quantity - 1)}
-                className="h-8 w-8"
-              >
-                <Minus className="h-4 w-4" />
-              </Button>
-              <span className="w-6 text-center font-semibold text-foreground">
-                {quantity}
-              </span>
-              <Button
-                size="icon"
+                size="sm"
                 onClick={() => addToCart(item)}
-                className="h-8 w-8"
+                className="h-7 px-3 text-xs"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="mr-1 h-3 w-3" />
+                Add
               </Button>
-            </div>
-          ) : (
-            <Button
-              size="icon"
-              onClick={() => addToCart(item)}
-              className="h-8 w-8"
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </motion.div>

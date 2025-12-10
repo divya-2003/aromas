@@ -4,8 +4,8 @@ import paneerTikka from "@/assets/paneer-tikka.jpg";
 import vegBiryani from "@/assets/veg-biryani.jpg";
 import chickenBiryani from "@/assets/chicken-biryani.jpg";
 import samosaNew from "@/assets/samosa-new.jpg";
-import frenchFries from "@/assets/french-fries.jpg";
-import chickenMomos from "@/assets/chicken-momos.jpg";
+import frenchFriesNew from "@/assets/french-fries-new.jpg";
+import chickenMomosNew from "@/assets/chicken-momos-new.jpg";
 import masalaChaiNew from "@/assets/masala-chai-new.jpg";
 import coldCoffee from "@/assets/cold-coffee.jpg";
 import limeSoda from "@/assets/lime-soda.jpg";
@@ -97,6 +97,7 @@ export const menuItems: MenuItem[] = [
     category: "main",
     image: pinkSaucePasta,
     isVeg: true,
+    isBestSeller: true,
   },
   {
     id: "9",
@@ -113,7 +114,7 @@ export const menuItems: MenuItem[] = [
     description: "Golden crispy fries with seasoning and dipping sauce",
     price: 50,
     category: "snacks",
-    image: frenchFries,
+    image: frenchFriesNew,
     isVeg: true,
   },
   {
@@ -122,7 +123,7 @@ export const menuItems: MenuItem[] = [
     description: "Steamed dumplings filled with spiced chicken, served with chutney",
     price: 60,
     category: "snacks",
-    image: chickenMomos,
+    image: chickenMomosNew,
     isVeg: false,
   },
   {
