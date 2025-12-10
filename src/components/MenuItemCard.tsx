@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { MenuItem } from "@/types/menu";
 import { Button } from "@/components/ui/button";
-import { Plus, Award } from "lucide-react";
+import { Plus, Minus, Award } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 
 interface MenuItemCardProps {
@@ -9,7 +9,10 @@ interface MenuItemCardProps {
 }
 
 export function MenuItemCard({ item }: MenuItemCardProps) {
-  const { addToCart } = useApp();
+  const { addToCart, cart, updateQuantity } = useApp();
+  
+  const cartItem = cart.find((i) => i.id === item.id);
+  const quantity = cartItem?.quantity || 0;
 
   return (
     <motion.div
@@ -67,13 +70,36 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
         </p>
 
         <div className="mt-3 flex items-center justify-end">
-          <Button
-            size="icon"
-            onClick={() => addToCart(item)}
-            className="h-8 w-8"
-          >
-            <Plus className="h-4 w-4" />
-          </Button>
+          {quantity > 0 ? (
+            <div className="flex items-center gap-2">
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={() => updateQuantity(item.id, quantity - 1)}
+                className="h-8 w-8"
+              >
+                <Minus className="h-4 w-4" />
+              </Button>
+              <span className="w-6 text-center font-semibold text-foreground">
+                {quantity}
+              </span>
+              <Button
+                size="icon"
+                onClick={() => addToCart(item)}
+                className="h-8 w-8"
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+          ) : (
+            <Button
+              size="icon"
+              onClick={() => addToCart(item)}
+              className="h-8 w-8"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
     </motion.div>
