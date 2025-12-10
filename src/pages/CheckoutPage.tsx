@@ -171,21 +171,6 @@ const CheckoutPage = () => {
           </div>
         </motion.div>
 
-        {/* Pickup Info */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mt-6 rounded-2xl bg-accent p-4"
-        >
-          <h3 className="font-semibold text-accent-foreground">📍 Pickup Location</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            College Canteen - Main Building, Ground Floor
-          </p>
-          <p className="mt-2 text-sm font-medium text-accent-foreground">
-            Est. pickup time: ~15-20 mins after order
-          </p>
-        </motion.div>
       </main>
 
       {/* Fixed Bottom Bar */}
