@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ShoppingBag, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { menuItems, menuCategories } from "@/data/menu";
 import { MenuItemCard } from "@/components/MenuItemCard";
 import { CategoryTabs } from "@/components/CategoryTabs";
@@ -53,19 +53,6 @@ const MenuPage = () => {
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
               >
                 <Search className="h-5 w-5" />
-              </Button>
-              <Button
-                variant="icon"
-                size="icon"
-                className="relative"
-                onClick={() => setIsCartOpen(true)}
-              >
-                <ShoppingBag className="h-5 w-5" />
-                {cartItemCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                    {cartItemCount}
-                  </span>
-                )}
               </Button>
               <ProfileDropdown />
             </div>
