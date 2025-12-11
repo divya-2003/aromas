@@ -47,9 +47,11 @@ const AuthPage = () => {
           if (error.message.includes("Invalid login credentials")) {
             toast({ 
               title: "Account not found", 
-              description: "No account exists with this email or password is incorrect.",
+              description: "No account exists with this email. Redirecting to signup...",
               variant: "destructive"
             });
+            setMode("signup");
+            setPassword("");
           } else {
             throw error;
           }
