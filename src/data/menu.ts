@@ -11,8 +11,8 @@ import coldCoffee from "@/assets/cold-coffee.jpg";
 import limeSoda from "@/assets/lime-soda.jpg";
 import gulabJamun from "@/assets/gulab-jamun.jpg";
 import iceCreamSundae from "@/assets/ice-cream-sundae.jpg";
-import whiteSaucePasta from "@/assets/white-sauce-pasta.jpg";
-import redSaucePasta from "@/assets/red-sauce-pasta.jpg";
+import whiteSaucePastaNew from "@/assets/white-sauce-pasta-new.jpg";
+import redSaucePastaNew from "@/assets/red-sauce-pasta-new.jpg";
 import pinkSaucePasta from "@/assets/pink-sauce-pasta.jpg";
 import paneerButterMasala from "@/assets/paneer-butter-masala.jpg";
 
@@ -76,7 +76,7 @@ export const menuItems: MenuItem[] = [
     description: "Creamy pasta in rich white sauce with herbs and parmesan",
     price: 85,
     category: "main",
-    image: whiteSaucePasta,
+    image: whiteSaucePastaNew,
     isVeg: true,
   },
   {
@@ -85,7 +85,7 @@ export const menuItems: MenuItem[] = [
     description: "Classic pasta in tangy tomato sauce with Italian herbs",
     price: 80,
     category: "main",
-    image: redSaucePasta,
+    image: redSaucePastaNew,
     isVeg: true,
   },
   {
