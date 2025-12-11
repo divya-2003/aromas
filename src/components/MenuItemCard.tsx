@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { MenuItem } from "@/types/menu";
 import { Button } from "@/components/ui/button";
-import { Plus, Minus, Award } from "lucide-react";
+import { Plus, Minus } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 
 interface MenuItemCardProps {
@@ -46,12 +46,6 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
               }`} 
             />
           </span>
-          {item.isBestSeller && (
-            <span className="flex items-center gap-1 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white">
-              <Award className="h-3 w-3" />
-              Best Seller
-            </span>
-          )}
         </div>
 
         {/* Price badge */}
@@ -67,9 +61,6 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1">
             <h3 className="font-semibold text-foreground">{item.name}</h3>
-            <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-              {item.description}
-            </p>
           </div>
           
           {/* Cart controls */}

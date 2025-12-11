@@ -78,7 +78,6 @@ export const menuItems: MenuItem[] = [
     category: "main",
     image: whiteSaucePasta,
     isVeg: true,
-    isBestSeller: true,
   },
   {
     id: "7",
@@ -97,7 +96,6 @@ export const menuItems: MenuItem[] = [
     category: "main",
     image: pinkSaucePasta,
     isVeg: true,
-    isBestSeller: true,
   },
   {
     id: "9",
