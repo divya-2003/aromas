@@ -56,7 +56,6 @@ export const ProfileDropdown = () => {
             <User className="h-7 w-7 text-primary" />
           </div>
           <h3 className="mt-2 text-base font-semibold text-foreground">{userName}</h3>
-          <p className="text-sm text-muted-foreground">Student</p>
         </div>
 
         {/* Account Details */}
@@ -71,15 +70,6 @@ export const ProfileDropdown = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
-              <GraduationCap className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Status</p>
-              <p className="text-sm font-medium text-foreground">Verified Student</p>
-            </div>
-          </div>
 
           {/* Your Orders */}
           <button
