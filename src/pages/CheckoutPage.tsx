@@ -106,17 +106,9 @@ const CheckoutPage = () => {
             ))}
           </div>
           <div className="mt-4 border-t border-border pt-4">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Subtotal</span>
-              <span>₹{cartTotal}</span>
-            </div>
-            <div className="mt-1 flex justify-between text-sm">
-              <span className="text-muted-foreground">Convenience Fee</span>
-              <span>₹5</span>
-            </div>
-            <div className="mt-2 flex justify-between text-lg font-bold">
+            <div className="flex justify-between text-lg font-bold">
               <span>Total</span>
-              <span className="text-primary">₹{cartTotal + 5}</span>
+              <span className="text-primary">₹{cartTotal}</span>
             </div>
           </div>
         </motion.div>
@@ -187,7 +179,7 @@ const CheckoutPage = () => {
               Processing...
             </span>
           ) : (
-            `Pay ₹${cartTotal + 5}`
+            `Pay ₹${cartTotal}`
           )}
         </Button>
       </div>
