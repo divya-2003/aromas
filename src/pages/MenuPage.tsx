@@ -7,6 +7,7 @@ import { CategoryTabs } from "@/components/CategoryTabs";
 import { CartSheet } from "@/components/CartSheet";
 import { FloatingCartButton } from "@/components/FloatingCartButton";
 import { ProfileDropdown } from "@/components/ProfileDropdown";
+import { OrderCard } from "@/components/OrderCard";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/context/AppContext";
 
@@ -16,7 +17,10 @@ const MenuPage = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [vegFilter, setVegFilter] = useState<"all" | "veg" | "nonveg">("all");
-  const { cartItemCount, isAuthenticated, userName } = useApp();
+  const { cartItemCount, isAuthenticated, userName, orders } = useApp();
+  
+  // Get active orders (not picked up yet)
+  const activeOrders = orders.filter(order => order.status !== "picked_up");
 
   const filteredItems = menuItems.filter((item) => {
     const matchesCategory = activeCategory === "all" || item.category === activeCategory;
@@ -140,6 +144,18 @@ const MenuPage = () => {
           )}
         </div>
       </header>
+
+      {/* Active Orders Section */}
+      {activeOrders.length > 0 && (
+        <section className="container py-4">
+          <h2 className="mb-3 text-lg font-semibold">Active Orders</h2>
+          <div className="space-y-3">
+            {activeOrders.map((order) => (
+              <OrderCard key={order.id} order={order} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Menu Grid */}
       <main className="container py-6">
