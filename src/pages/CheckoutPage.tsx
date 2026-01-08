@@ -34,13 +34,13 @@ const CheckoutPage = () => {
     // Simulate payment processing
     await new Promise((resolve) => setTimeout(resolve, 2000));
     
-    const order = placeOrder();
+    const order = await placeOrder();
     setIsProcessing(false);
 
     if (order) {
       toast({
         title: "🎉 Order placed successfully!",
-        description: `Order ${order.id} is being prepared`,
+        description: `Your order is being prepared`,
       });
       navigate("/orders");
     }

@@ -15,7 +15,7 @@ interface AppContextType {
   updateQuantity: (itemId: string, quantity: number) => void;
   updateSpecialInstructions: (instructions: string) => void;
   clearCart: () => void;
-  placeOrder: () => Order | null;
+  placeOrder: () => Promise<Order | null>;
   login: (name: string, email: string) => void;
   logout: () => void;
   cartTotal: number;
@@ -57,6 +57,92 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Fetch orders from database when authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setOrders([]);
+      return;
+    }
+
+    const fetchOrders = async () => {
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .order('placed_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching orders:', error);
+        return;
+      }
+
+      if (data) {
+        const mappedOrders: Order[] = data.map((order: any) => ({
+          id: order.id,
+          items: order.items as CartItem[],
+          totalAmount: order.total_amount,
+          status: order.status as OrderStatus,
+          placedAt: new Date(order.placed_at),
+          estimatedReadyTime: order.estimated_ready_time ? new Date(order.estimated_ready_time) : undefined,
+          specialInstructions: order.special_instructions,
+        }));
+        setOrders(mappedOrders);
+      }
+    };
+
+    fetchOrders();
+
+    // Subscribe to realtime updates for orders
+    const channel = supabase
+      .channel('orders-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'orders'
+        },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            const newOrder = payload.new as any;
+            const mappedOrder: Order = {
+              id: newOrder.id,
+              items: newOrder.items as CartItem[],
+              totalAmount: newOrder.total_amount,
+              status: newOrder.status as OrderStatus,
+              placedAt: new Date(newOrder.placed_at),
+              estimatedReadyTime: newOrder.estimated_ready_time ? new Date(newOrder.estimated_ready_time) : undefined,
+              specialInstructions: newOrder.special_instructions,
+            };
+            setOrders(prev => [mappedOrder, ...prev.filter(o => o.id !== mappedOrder.id)]);
+          } else if (payload.eventType === 'UPDATE') {
+            const updatedOrder = payload.new as any;
+            setOrders(prev => prev.map(order => 
+              order.id === updatedOrder.id 
+                ? {
+                    ...order,
+                    status: updatedOrder.status as OrderStatus,
+                    estimatedReadyTime: updatedOrder.estimated_ready_time ? new Date(updatedOrder.estimated_ready_time) : undefined,
+                  }
+                : order
+            ));
+            
+            // Show toast when order is ready
+            if (updatedOrder.status === 'ready') {
+              toast({
+                title: "🎉 Your order is ready!",
+                description: `Order is ready for pickup`,
+              });
+            }
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [isAuthenticated]);
 
   const addToCart = (
     item: MenuItem, 
@@ -101,44 +187,66 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  const placeOrder = (): Order | null => {
+  const placeOrder = async (): Promise<Order | null> => {
     if (cart.length === 0) return null;
 
-    // Default preparation time of 15 minutes
-    const estimatedReadyTime = new Date();
-    estimatedReadyTime.setMinutes(estimatedReadyTime.getMinutes() + 15);
-
-    const newOrder: Order = {
-      id: `ORD-${Date.now()}`,
-      items: [...cart],
-      totalAmount: cartTotal,
-      status: "placed",
-      placedAt: new Date(),
-      estimatedReadyTime,
-      specialInstructions,
-    };
-
-    setOrders((prev) => [newOrder, ...prev]);
-    clearCart();
-
-    // Simulate order status updates
-    setTimeout(() => {
-      setOrders((prev) =>
-        prev.map((o) => (o.id === newOrder.id ? { ...o, status: "preparing" as OrderStatus } : o))
-      );
-    }, 5000);
-
-    setTimeout(() => {
-      setOrders((prev) =>
-        prev.map((o) => (o.id === newOrder.id ? { ...o, status: "ready" as OrderStatus } : o))
-      );
-      toast({
-        title: "🎉 Your order is ready!",
-        description: `Order ${newOrder.id} is ready for pickup`,
+    try {
+      // Call server-side edge function for validated order creation
+      const { data, error } = await supabase.functions.invoke('create-order', {
+        body: {
+          items: cart.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            customizations: item.customizations,
+            specialInstructions: item.specialInstructions,
+          })),
+          specialInstructions,
+        },
       });
-    }, 15000);
 
-    return newOrder;
+      if (error) {
+        console.error('Order creation error:', error);
+        toast({
+          title: "Order failed",
+          description: "Unable to place order. Please try again.",
+          variant: "destructive",
+        });
+        return null;
+      }
+
+      if (!data?.success || !data?.order) {
+        console.error('Order creation failed:', data?.error);
+        toast({
+          title: "Order failed",
+          description: data?.error || "Unable to place order. Please try again.",
+          variant: "destructive",
+        });
+        return null;
+      }
+
+      const newOrder: Order = {
+        id: data.order.id,
+        items: data.order.items as CartItem[],
+        totalAmount: data.order.totalAmount,
+        status: data.order.status as OrderStatus,
+        placedAt: new Date(data.order.placedAt),
+        estimatedReadyTime: data.order.estimatedReadyTime ? new Date(data.order.estimatedReadyTime) : undefined,
+        specialInstructions: data.order.specialInstructions,
+      };
+
+      clearCart();
+      return newOrder;
+    } catch (error) {
+      console.error('Unexpected error placing order:', error);
+      toast({
+        title: "Order failed",
+        description: "Unable to place order. Please try again.",
+        variant: "destructive",
+      });
+      return null;
+    }
   };
 
   const login = (name: string, email: string) => {
