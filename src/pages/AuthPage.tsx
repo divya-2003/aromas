@@ -44,17 +44,13 @@ const AuthPage = () => {
         });
 
         if (error) {
-          if (error.message.includes("Invalid login credentials")) {
-            toast({ 
-              title: "Account not found", 
-              description: "No account exists with this email. Redirecting to signup...",
-              variant: "destructive"
-            });
-            setMode("signup");
-            setPassword("");
-          } else {
-            throw error;
-          }
+          // Use generic error message to prevent user enumeration
+          toast({ 
+            title: "Login failed", 
+            description: "Invalid email or password. Please try again.",
+            variant: "destructive"
+          });
+          setPassword("");
           setIsLoading(false);
           return;
         }
@@ -77,10 +73,12 @@ const AuthPage = () => {
           return;
         }
 
-        if (password.length < 6) {
+        // Strong password validation: min 8 chars, uppercase, lowercase, and number
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/;
+        if (!passwordRegex.test(password)) {
           toast({ 
             title: "Weak password", 
-            description: "Password must be at least 6 characters long.",
+            description: "Password must be at least 8 characters with uppercase, lowercase, and a number.",
             variant: "destructive"
           });
           setIsLoading(false);
@@ -97,16 +95,12 @@ const AuthPage = () => {
         });
 
         if (error) {
-          if (error.message.includes("already registered")) {
-            toast({ 
-              title: "Account already exists", 
-              description: "An account with this email already exists. Please sign in.",
-              variant: "destructive"
-            });
-            setMode("login");
-          } else {
-            throw error;
-          }
+          // Use generic message to prevent email enumeration
+          toast({ 
+            title: "Signup issue", 
+            description: "Unable to create account. The email may already be in use.",
+            variant: "destructive"
+          });
           setIsLoading(false);
           return;
         }
