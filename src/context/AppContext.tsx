@@ -72,7 +72,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
         .order('placed_at', { ascending: false });
 
       if (error) {
-        console.error('Error fetching orders:', error);
+        if (import.meta.env.DEV) {
+          console.error('Error fetching orders:', error);
+        }
+        toast({
+          title: "Unable to load orders",
+          description: "Please try again later",
+          variant: "destructive",
+        });
         return;
       }
 
@@ -170,12 +177,28 @@ export function AppProvider({ children }: { children: ReactNode }) {
       removeFromCart(itemId);
       return;
     }
+    if (quantity > 20) {
+      toast({
+        title: "Quantity limit",
+        description: "Maximum 20 items per item type",
+        variant: "destructive",
+      });
+      return;
+    }
     setCart((prev) =>
       prev.map((item) => (item.id === itemId ? { ...item, quantity } : item))
     );
   };
 
   const updateSpecialInstructions = (instructions: string) => {
+    if (instructions.length > 1000) {
+      toast({
+        title: "Too long",
+        description: "Special instructions must be under 1000 characters",
+        variant: "destructive",
+      });
+      return;
+    }
     setSpecialInstructions(instructions);
   };
 
@@ -207,7 +230,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       });
 
       if (error) {
-        console.error('Order creation error:', error);
+        if (import.meta.env.DEV) {
+          console.error('Order creation error:', error);
+        }
         toast({
           title: "Order failed",
           description: "Unable to place order. Please try again.",
@@ -217,10 +242,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
 
       if (!data?.success || !data?.order) {
-        console.error('Order creation failed:', data?.error);
+        if (import.meta.env.DEV) {
+          console.error('Order creation failed:', data?.error);
+        }
         toast({
           title: "Order failed",
-          description: data?.error || "Unable to place order. Please try again.",
+          description: "Unable to place order. Please try again.",
           variant: "destructive",
         });
         return null;
@@ -239,7 +266,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       clearCart();
       return newOrder;
     } catch (error) {
-      console.error('Unexpected error placing order:', error);
+      if (import.meta.env.DEV) {
+        console.error('Unexpected error placing order:', error);
+      }
       toast({
         title: "Order failed",
         description: "Unable to place order. Please try again.",
