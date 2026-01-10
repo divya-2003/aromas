@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, User, Mail, Lock, Chrome } from "lucide-react";
+import { ArrowLeft, User, Mail, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
@@ -18,26 +18,6 @@ const AuthPage = () => {
   const { login } = useApp();
   const navigate = useNavigate();
 
-  const handleGoogleSignIn = async () => {
-    setIsLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/`,
-        },
-      });
-
-      if (error) throw error;
-    } catch (error: any) {
-      toast({
-        title: "Google sign-in failed",
-        description: error.message || "Something went wrong",
-        variant: "destructive",
-      });
-      setIsLoading(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -262,30 +242,6 @@ const AuthPage = () => {
                 {getButtonText()}
               </Button>
 
-              {mode !== "forgot-password" && (
-                <>
-                  <div className="relative my-4">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t border-border" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
-                    </div>
-                  </div>
-
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full"
-                    size="lg"
-                    onClick={handleGoogleSignIn}
-                    disabled={isLoading}
-                  >
-                    <Chrome className="mr-2 h-5 w-5" />
-                    Google
-                  </Button>
-                </>
-              )}
             </form>
 
             <div className="mt-6 text-center">
