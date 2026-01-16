@@ -125,7 +125,7 @@ const AuthPage = () => {
     switch (mode) {
       case "forgot-password": return "Reset Password";
       case "login": return "Welcome back!";
-      default: return "Join QuickBite";
+      default: return "Join Aromas";
     }
   };
 
@@ -162,7 +162,7 @@ const AuthPage = () => {
         >
           {/* Logo */}
           <div className="mb-8 text-center">
-            <h1 className="text-4xl font-bold text-foreground">QuickBite 🍔</h1>
+            <h1 className="text-4xl font-bold text-foreground">Aromas 🍔</h1>
             <p className="mt-2 text-muted-foreground">{getSubtitle()}</p>
           </div>
 
