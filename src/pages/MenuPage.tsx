@@ -44,7 +44,7 @@ const MenuPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="text-2xl font-bold text-foreground"
               >
-                QuickBite 🍔
+                Aromas 🍔
               </motion.h1>
               <p className="text-sm text-muted-foreground">
                 {isAuthenticated ? `Hey, ${userName}!` : "Order ahead, skip the wait"}
