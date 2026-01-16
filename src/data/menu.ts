@@ -1,8 +1,8 @@
 import { MenuItem } from "@/types/menu";
 import butterChicken from "@/assets/butter-chicken.jpg";
 import paneerTikka from "@/assets/paneer-tikka.jpg";
-import vegBiryani from "@/assets/veg-biryani.jpg";
-import chickenBiryani from "@/assets/chicken-biryani.jpg";
+import vegBiryani from "@/assets/veg-biryani-bowl.jpg";
+import chickenBiryani from "@/assets/chicken-biryani-bowl.jpg";
 import samosaNew from "@/assets/samosa-new.jpg";
 import frenchFriesNew from "@/assets/french-fries-new.jpg";
 import chickenMomosNew from "@/assets/chicken-momos-new.jpg";
