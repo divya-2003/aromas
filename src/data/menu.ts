@@ -99,7 +99,7 @@ export const menuItems: MenuItem[] = [
   },
   {
     id: "9",
-    name: "Samosa (2 pcs)",
+    name: "Samosa",
     description: "Crispy pastry filled with spiced potatoes and peas",
     price: 30,
     category: "snacks",
