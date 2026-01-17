@@ -15,7 +15,7 @@ const paymentMethods = [
 const CheckoutPage = () => {
   const [selectedPayment, setSelectedPayment] = useState("upi");
   const [isProcessing, setIsProcessing] = useState(false);
-  const { cart, cartTotal, placeOrder, isAuthenticated } = useApp();
+  const { cart, cartTotal, placeOrder, isAuthenticated, isParcel, parcelCharge, grandTotal } = useApp();
   const navigate = useNavigate();
 
   const handlePlaceOrder = async () => {
@@ -105,10 +105,20 @@ const CheckoutPage = () => {
               </div>
             ))}
           </div>
-          <div className="mt-4 border-t border-border pt-4">
-            <div className="flex justify-between text-lg font-bold">
+          <div className="mt-4 border-t border-border pt-4 space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Subtotal</span>
+              <span>₹{cartTotal}</span>
+            </div>
+            {isParcel && (
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Parcel Charge</span>
+                <span>₹{parcelCharge}</span>
+              </div>
+            )}
+            <div className="flex justify-between text-lg font-bold pt-2 border-t border-border">
               <span>Total</span>
-              <span className="text-primary">₹{cartTotal}</span>
+              <span className="text-primary">₹{grandTotal}</span>
             </div>
           </div>
         </motion.div>
@@ -179,7 +189,7 @@ const CheckoutPage = () => {
               Processing...
             </span>
           ) : (
-            `Pay ₹${cartTotal}`
+            `Pay ₹${grandTotal}`
           )}
         </Button>
       </div>

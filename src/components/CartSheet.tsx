@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, X, Plus, Minus, Trash2, FileText } from "lucide-react";
+import { ShoppingBag, X, Plus, Minus, Trash2, FileText, Package } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { useNavigate } from "react-router-dom";
 
 interface CartSheetProps {
@@ -12,7 +13,7 @@ interface CartSheetProps {
 }
 
 export function CartSheet({ isOpen, onClose }: CartSheetProps) {
-  const { cart, cartTotal, updateQuantity, removeFromCart, updateSpecialInstructions } = useApp();
+  const { cart, cartTotal, updateQuantity, removeFromCart, updateSpecialInstructions, isParcel, setIsParcel, parcelCharge, grandTotal } = useApp();
   const navigate = useNavigate();
   const [showInstructions, setShowInstructions] = useState(false);
   const [instructions, setInstructions] = useState("");
@@ -145,6 +146,23 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
             {/* Special Instructions & Footer */}
             {cart.length > 0 && (
               <div className="border-t border-border p-4 space-y-4">
+                {/* Parcel Option */}
+                <div className="flex items-center justify-between rounded-xl bg-card p-3">
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-full bg-muted p-2">
+                      <Package className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">Parcel</p>
+                      <p className="text-xs text-muted-foreground">+₹10 packaging charge</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={isParcel}
+                    onCheckedChange={setIsParcel}
+                  />
+                </div>
+
                 {/* Special Instructions */}
                 <div>
                   <Button
@@ -186,9 +204,21 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
                   )}
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Total</span>
-                  <span className="text-2xl font-bold">₹{cartTotal}</span>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span>₹{cartTotal}</span>
+                  </div>
+                  {isParcel && (
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Parcel Charge</span>
+                      <span>₹{parcelCharge}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between pt-2 border-t border-border">
+                    <span className="text-muted-foreground">Total</span>
+                    <span className="text-2xl font-bold">₹{grandTotal}</span>
+                  </div>
                 </div>
                 <Button className="w-full" size="lg" onClick={handleCheckout}>
                   Proceed to Checkout
