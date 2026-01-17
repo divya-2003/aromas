@@ -10,16 +10,20 @@ interface AppContextType {
   userName: string;
   userEmail: string;
   specialInstructions: string;
+  isParcel: boolean;
   addToCart: (item: MenuItem, quantity?: number, customizations?: string[], specialInstructions?: string) => void;
   removeFromCart: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   updateSpecialInstructions: (instructions: string) => void;
+  setIsParcel: (isParcel: boolean) => void;
   clearCart: () => void;
   placeOrder: () => Promise<Order | null>;
   login: (name: string, email: string) => void;
   logout: () => void;
   cartTotal: number;
   cartItemCount: number;
+  parcelCharge: number;
+  grandTotal: number;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -31,6 +35,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [specialInstructions, setSpecialInstructions] = useState("");
+  const [isParcel, setIsParcel] = useState(false);
 
   // Listen to Supabase auth state changes
   useEffect(() => {
@@ -205,10 +210,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const clearCart = () => {
     setCart([]);
     setSpecialInstructions("");
+    setIsParcel(false);
   };
 
   const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const parcelCharge = isParcel ? 10 : 0;
+  const grandTotal = cartTotal + parcelCharge;
 
   const placeOrder = async (): Promise<Order | null> => {
     if (cart.length === 0) return null;
@@ -300,16 +308,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
         userName,
         userEmail,
         specialInstructions,
+        isParcel,
         addToCart,
         removeFromCart,
         updateQuantity,
         updateSpecialInstructions,
+        setIsParcel,
         clearCart,
         placeOrder,
         login,
         logout,
         cartTotal,
         cartItemCount,
+        parcelCharge,
+        grandTotal,
       }}
     >
       {children}
