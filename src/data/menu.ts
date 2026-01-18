@@ -3,7 +3,7 @@ import butterChicken from "@/assets/butter-chicken.jpg";
 import paneerTikka from "@/assets/paneer-tikka.jpg";
 import vegBiryani from "@/assets/veg-biryani.jpg";
 import chickenBiryani from "@/assets/chicken-biryani.jpg";
-import samosaUpdated from "@/assets/samosa-updated.jpg";
+
 import frenchFriesNew from "@/assets/french-fries-new.jpg";
 import chickenMomosNew from "@/assets/chicken-momos-new.jpg";
 import masalaChaiNew from "@/assets/masala-chai-new.jpg";
@@ -95,15 +95,6 @@ export const menuItems: MenuItem[] = [
     price: 90,
     category: "main",
     image: pinkSaucePasta,
-    isVeg: true,
-  },
-  {
-    id: "9",
-    name: "Samosa",
-    description: "Crispy pastry filled with spiced potatoes and peas",
-    price: 30,
-    category: "snacks",
-    image: samosaUpdated,
     isVeg: true,
   },
   {
