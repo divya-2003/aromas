@@ -3,7 +3,6 @@ import butterChicken from "@/assets/butter-chicken.jpg";
 import paneerTikka from "@/assets/paneer-tikka.jpg";
 import vegBiryani from "@/assets/veg-biryani.jpg";
 import chickenBiryani from "@/assets/chicken-biryani.jpg";
-
 import frenchFriesNew from "@/assets/french-fries-new.jpg";
 import chickenMomosNew from "@/assets/chicken-momos-new.jpg";
 import masalaChaiNew from "@/assets/masala-chai-new.jpg";
@@ -15,6 +14,11 @@ import whiteSaucePastaNew from "@/assets/white-sauce-pasta-new.jpg";
 import redSaucePastaNew from "@/assets/red-sauce-pasta-new.jpg";
 import pinkSaucePasta from "@/assets/pink-sauce-pasta.jpg";
 import paneerButterMasala from "@/assets/paneer-butter-masala.jpg";
+import buttermilk from "@/assets/buttermilk.jpg";
+import chickenBurger from "@/assets/chicken-burger.jpg";
+import alooTikkiBurger from "@/assets/aloo-tikki-burger.jpg";
+import paniPuri from "@/assets/pani-puri.jpg";
+import dahiPuri from "@/assets/dahi-puri.jpg";
 
 export const menuCategories = [
   { id: "all", name: "All", icon: "🍽️" },
@@ -116,6 +120,42 @@ export const menuItems: MenuItem[] = [
     isVeg: false,
   },
   {
+    id: "17",
+    name: "Chicken Burger",
+    description: "Crispy chicken patty with cheese, lettuce, tomato in a sesame bun",
+    price: 80,
+    category: "snacks",
+    image: chickenBurger,
+    isVeg: false,
+  },
+  {
+    id: "18",
+    name: "Aloo Tikki Burger",
+    description: "Crispy potato patty with green chutney, onions, lettuce in a soft bun",
+    price: 60,
+    category: "snacks",
+    image: alooTikkiBurger,
+    isVeg: true,
+  },
+  {
+    id: "19",
+    name: "Pani Puri (6 pcs)",
+    description: "Crispy puris with spiced water, tamarind chutney and potato filling",
+    price: 40,
+    category: "snacks",
+    image: paniPuri,
+    isVeg: true,
+  },
+  {
+    id: "20",
+    name: "Dahi Puri (6 pcs)",
+    description: "Crispy puris topped with yogurt, chutneys, sev and coriander",
+    price: 50,
+    category: "snacks",
+    image: dahiPuri,
+    isVeg: true,
+  },
+  {
     id: "12",
     name: "Masala Chai",
     description: "Traditional Indian spiced tea with milk",
@@ -140,6 +180,15 @@ export const menuItems: MenuItem[] = [
     price: 35,
     category: "beverages",
     image: limeSoda,
+    isVeg: true,
+  },
+  {
+    id: "21",
+    name: "Buttermilk",
+    description: "Refreshing spiced buttermilk with cumin and mint, cooling digestive drink",
+    price: 25,
+    category: "beverages",
+    image: buttermilk,
     isVeg: true,
   },
   {
