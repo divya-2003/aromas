@@ -141,7 +141,7 @@ export const menuItems: MenuItem[] = [
     id: "19",
     name: "Pani Puri (6 pcs)",
     description: "Crispy puris with spiced water, tamarind chutney and potato filling",
-    price: 40,
+    price: 50,
     category: "snacks",
     image: paniPuri,
     isVeg: true,
