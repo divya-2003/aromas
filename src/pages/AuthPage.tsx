@@ -149,8 +149,7 @@ const AuthPage = () => {
   const getSubtitle = () => {
     switch (mode) {
       case "forgot-password": return "Enter your email to receive a reset link";
-      case "login": return "Let's get you fed.";
-      default: return "Skip the queue";
+      default: return "";
     }
   };
 
