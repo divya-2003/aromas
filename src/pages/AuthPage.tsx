@@ -240,6 +240,11 @@ const AuthPage = () => {
                       required
                     />
                   </div>
+                  {mode === "signup" && (
+                    <p className="mt-1.5 text-xs text-muted-foreground">
+                      Min 8 characters with uppercase, lowercase & a number
+                    </p>
+                  )}
                 </div>
               )}
 
