@@ -74,12 +74,22 @@ const AuthPage = () => {
           return;
         }
 
-        // Strong password validation: min 8 chars, uppercase, lowercase, and number
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/;
+        // Strong password validation: min 18 chars, uppercase, lowercase, and number
+        if (password.length < 18) {
+          toast({ 
+            title: "Weak password", 
+            description: "Password must be at least 18 characters long.",
+            variant: "destructive"
+          });
+          setIsLoading(false);
+          return;
+        }
+        
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
         if (!passwordRegex.test(password)) {
           toast({ 
             title: "Weak password", 
-            description: "Password must be at least 8 characters with uppercase, lowercase, and a number.",
+            description: "Password must include uppercase, lowercase, and a number.",
             variant: "destructive"
           });
           setIsLoading(false);
@@ -96,10 +106,17 @@ const AuthPage = () => {
         });
 
         if (error) {
-          // Use generic message to prevent email enumeration
+          // Handle specific error types
+          let errorMessage = "Unable to create account. Please try again.";
+          if (error.message?.includes("weak_password") || error.message?.includes("Password")) {
+            errorMessage = "Password is too weak. Use at least 18 characters with mixed case and numbers.";
+          } else if (error.message?.includes("already registered")) {
+            errorMessage = "This email is already registered. Please login instead.";
+          }
+          
           toast({ 
             title: "Signup issue", 
-            description: "Unable to create account. The email may already be in use.",
+            description: errorMessage,
             variant: "destructive"
           });
           setIsLoading(false);
