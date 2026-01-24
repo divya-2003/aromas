@@ -74,11 +74,11 @@ const AuthPage = () => {
           return;
         }
 
-        // Strong password validation: min 18 chars, uppercase, lowercase, and number
-        if (password.length < 18) {
+        // Password validation: min 8 chars, uppercase, lowercase, and number
+        if (password.length < 8) {
           toast({ 
             title: "Weak password", 
-            description: "Password must be at least 18 characters long.",
+            description: "Password must be at least 8 characters long.",
             variant: "destructive"
           });
           setIsLoading(false);
