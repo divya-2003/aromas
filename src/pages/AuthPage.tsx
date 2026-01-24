@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, User, Mail, Lock } from "lucide-react";
+import { ArrowLeft, User, Mail, Lock, Chrome } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
@@ -15,6 +15,7 @@ const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const { login } = useApp();
   const navigate = useNavigate();
 
@@ -262,6 +263,47 @@ const AuthPage = () => {
               <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
                 {getButtonText()}
               </Button>
+
+              {mode !== "forgot-password" && (
+                <>
+                  <div className="relative my-4">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t border-border" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    size="lg"
+                    disabled={isGoogleLoading}
+                    onClick={async () => {
+                      setIsGoogleLoading(true);
+                      const { error } = await supabase.auth.signInWithOAuth({
+                        provider: 'google',
+                        options: {
+                          redirectTo: `${window.location.origin}/`,
+                        },
+                      });
+                      if (error) {
+                        toast({
+                          title: "Google sign-in failed",
+                          description: error.message,
+                          variant: "destructive",
+                        });
+                      }
+                      setIsGoogleLoading(false);
+                    }}
+                  >
+                    <Chrome className="mr-2 h-5 w-5" />
+                    {isGoogleLoading ? "Connecting..." : "Google"}
+                  </Button>
+                </>
+              )}
 
             </form>
 
