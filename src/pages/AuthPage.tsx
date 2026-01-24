@@ -253,14 +253,14 @@ const AuthPage = () => {
                   <button
                     type="button"
                     onClick={() => setMode("forgot-password")}
-                    className="text-sm text-primary hover:underline"
+                    className="text-sm text-foreground hover:underline"
                   >
                     Forgot password?
                   </button>
                 </div>
               )}
 
-              <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+              <Button type="submit" className="w-full bg-foreground text-background hover:bg-foreground/90" size="lg" disabled={isLoading}>
                 {getButtonText()}
               </Button>
 
@@ -278,7 +278,7 @@ const AuthPage = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    className="w-full"
+                    className="w-full border-foreground text-foreground hover:bg-foreground hover:text-background"
                     size="lg"
                     disabled={isGoogleLoading}
                     onClick={async () => {
@@ -325,7 +325,7 @@ const AuthPage = () => {
                   <button
                     type="button"
                     onClick={() => setMode(mode === "login" ? "signup" : "login")}
-                    className="font-semibold text-primary hover:underline"
+                    className={`font-semibold hover:underline ${mode === "login" ? "text-blue-600" : "text-foreground"}`}
                   >
                     {mode === "login" ? "Sign Up" : "Login"}
                   </button>
