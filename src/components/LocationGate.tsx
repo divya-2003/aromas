@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { MapPin, RefreshCw, AlertTriangle, CheckCircle } from "lucide-react";
+import { MapPin, RefreshCw, AlertTriangle, CheckCircle, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "@/hooks/useLocation";
 
@@ -102,30 +102,71 @@ export function LocationGate({ children }: LocationGateProps) {
 }
 
 export function LocationBadge() {
-  const { isWithinPremises, isLoading, distance, collegeName } = useLocation();
+  const { isWithinPremises, isLoading, distance, collegeName, refreshLocation } = useLocation();
 
   if (isLoading) {
     return (
-      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-        <MapPin className="h-3 w-3 animate-pulse" />
-        <span>Checking location...</span>
+      <div className="flex items-center gap-2 py-2">
+        <div className="flex items-center gap-2">
+          <MapPin className="h-5 w-5 text-primary animate-pulse" />
+          <div>
+            <div className="flex items-center gap-1">
+              <span className="font-semibold text-foreground">Locating...</span>
+            </div>
+            <p className="text-xs text-muted-foreground">Checking your location</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (isWithinPremises) {
     return (
-      <div className="flex items-center gap-1.5 text-xs text-green-600">
-        <CheckCircle className="h-3 w-3" />
-        <span>Within {collegeName} ({distance}m away)</span>
+      <div className="flex items-center justify-between py-2">
+        <div className="flex items-center gap-2">
+          <Navigation className="h-5 w-5 text-primary fill-primary" />
+          <div>
+            <div className="flex items-center gap-1">
+              <span className="font-semibold text-foreground">College</span>
+              <CheckCircle className="h-3.5 w-3.5 text-success" />
+            </div>
+            <p className="text-xs text-muted-foreground truncate max-w-[200px]">
+              {collegeName} • {distance}m away
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={refreshLocation}
+          className="p-1.5 rounded-full hover:bg-secondary/80 transition-colors"
+          aria-label="Refresh location"
+        >
+          <RefreshCw className="h-4 w-4 text-muted-foreground" />
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center gap-1.5 text-xs text-amber-600">
-      <AlertTriangle className="h-3 w-3" />
-      <span>Outside campus ({distance}m away)</span>
+    <div className="flex items-center justify-between py-2">
+      <div className="flex items-center gap-2">
+        <Navigation className="h-5 w-5 text-amber-500" />
+        <div>
+          <div className="flex items-center gap-1">
+            <span className="font-semibold text-foreground">Outside Campus</span>
+            <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
+          </div>
+          <p className="text-xs text-muted-foreground truncate max-w-[200px]">
+            {distance}m from {collegeName}
+          </p>
+        </div>
+      </div>
+      <button
+        onClick={refreshLocation}
+        className="p-1.5 rounded-full hover:bg-secondary/80 transition-colors"
+        aria-label="Refresh location"
+      >
+        <RefreshCw className="h-4 w-4 text-muted-foreground" />
+      </button>
     </div>
   );
 }
