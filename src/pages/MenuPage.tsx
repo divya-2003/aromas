@@ -10,6 +10,7 @@ import { ProfileDropdown } from "@/components/ProfileDropdown";
 import { OrderCard } from "@/components/OrderCard";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/context/AppContext";
+import { LocationBadge } from "@/components/LocationGate";
 
 const MenuPage = () => {
   const [activeCategory, setActiveCategory] = useState("all");
@@ -49,6 +50,7 @@ const MenuPage = () => {
               <p className="text-sm text-muted-foreground">
                 {isAuthenticated ? `Hey, ${userName}!` : "Order ahead, skip the wait"}
               </p>
+              <LocationBadge />
             </div>
             <div className="flex items-center gap-2">
               <Button
