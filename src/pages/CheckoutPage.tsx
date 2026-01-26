@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import { toast } from "@/hooks/use-toast";
+import { LocationGate, LocationBadge } from "@/components/LocationGate";
+import { useLocation } from "@/hooks/useLocation";
 
 const paymentMethods = [
   { id: "upi", name: "UPI", icon: Smartphone, description: "Google Pay, PhonePe, Paytm" },
@@ -17,6 +19,7 @@ const CheckoutPage = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const { cart, cartTotal, placeOrder, isAuthenticated, isParcel, parcelCharge, grandTotal } = useApp();
   const navigate = useNavigate();
+  const { isWithinPremises, isLoading: isLocationLoading } = useLocation();
 
   const handlePlaceOrder = async () => {
     if (!isAuthenticated) {
@@ -26,6 +29,15 @@ const CheckoutPage = () => {
         variant: "destructive",
       });
       navigate("/auth");
+      return;
+    }
+
+    if (!isWithinPremises) {
+      toast({
+        title: "Location required",
+        description: "You must be within the college premises to place an order",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -176,18 +188,23 @@ const CheckoutPage = () => {
       </main>
 
       {/* Fixed Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 border-t border-border bg-background p-4">
+      <div className="fixed bottom-0 left-0 right-0 border-t border-border bg-background p-4 space-y-2">
+        <LocationBadge />
         <Button
           className="w-full"
           size="lg"
           onClick={handlePlaceOrder}
-          disabled={isProcessing}
+          disabled={isProcessing || isLocationLoading || !isWithinPremises}
         >
           {isProcessing ? (
             <span className="flex items-center gap-2">
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
               Processing...
             </span>
+          ) : isLocationLoading ? (
+            "Verifying location..."
+          ) : !isWithinPremises ? (
+            "Outside campus - Cannot order"
           ) : (
             `Pay ₹${grandTotal}`
           )}
