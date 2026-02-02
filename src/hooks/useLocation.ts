@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 
 // Alliance University, Chandapura-Anekal, Bangalore
 const COLLEGE_LOCATION = {
-  latitude: 12.729394,
-  longitude: 77.7093,
+  latitude: 12.730493,
+  longitude: 77.706792,
   name: "Alliance University"
 };
 
