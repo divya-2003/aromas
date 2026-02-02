@@ -72,6 +72,12 @@ export function useLocation() {
           COLLEGE_LOCATION.longitude
         );
 
+        // Debug: Log coordinates and distance
+        console.log("Your location:", latitude, longitude);
+        console.log("Campus location:", COLLEGE_LOCATION.latitude, COLLEGE_LOCATION.longitude);
+        console.log("Distance (meters):", Math.round(distance));
+        console.log("Allowed radius:", ALLOWED_RADIUS_METERS);
+
         const isWithin = distance <= ALLOWED_RADIUS_METERS;
 
         setLocationState({
