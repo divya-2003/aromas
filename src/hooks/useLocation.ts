@@ -7,8 +7,8 @@ const COLLEGE_LOCATION = {
   name: "Alliance University"
 };
 
-// Allowed radius in meters (increased for larger campus coverage)
-const ALLOWED_RADIUS_METERS = 1000;
+// Allowed radius in meters (2km for full campus coverage)
+const ALLOWED_RADIUS_METERS = 2000;
 
 interface LocationState {
   isWithinPremises: boolean;
