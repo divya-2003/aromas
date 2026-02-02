@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 
-// Sample college coordinates - UPDATE THESE with actual college location
+// Alliance University, Chandapura-Anekal, Bangalore
 const COLLEGE_LOCATION = {
-  latitude: 17.385044,  // Example: Hyderabad coordinates
-  longitude: 78.486671,
-  name: "College Campus"
+  latitude: 12.729394,
+  longitude: 77.7093,
+  name: "Alliance University"
 };
 
 // Allowed radius in meters
