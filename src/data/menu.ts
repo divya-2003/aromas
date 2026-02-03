@@ -7,6 +7,7 @@ import frenchFriesNew from "@/assets/french-fries-new.jpg";
 import chickenMomosNew from "@/assets/chicken-momos-new.jpg";
 import masalaChaiNew from "@/assets/masala-chai-new.jpg";
 import coldCoffee from "@/assets/cold-coffee.jpg";
+import hotCoffee from "@/assets/hot-coffee.jpg";
 import limeSoda from "@/assets/lime-soda.jpg";
 import gulabJamun from "@/assets/gulab-jamun.jpg";
 import iceCreamSundae from "@/assets/ice-cream-sundae.jpg";
@@ -176,7 +177,7 @@ export const menuItems: MenuItem[] = [
     description: "Hot brewed coffee with milk, rich and aromatic",
     price: 20,
     category: "beverages",
-    image: coldCoffee,
+    image: hotCoffee,
     isVeg: true,
   },
   {
