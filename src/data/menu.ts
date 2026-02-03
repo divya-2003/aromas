@@ -19,11 +19,17 @@ import chickenBurger from "@/assets/chicken-burger.jpg";
 import alooTikkiBurger from "@/assets/aloo-tikki-burger.jpg";
 import paniPuri from "@/assets/pani-puri.jpg";
 import dahiPuri from "@/assets/dahi-puri.jpg";
+import manchowSoup from "@/assets/manchow-soup.jpg";
+import plainMaggi from "@/assets/plain-maggi.jpg";
+import vegMaggi from "@/assets/veg-maggi.jpg";
+import cheeseMaggi from "@/assets/cheese-maggi.jpg";
 
 export const menuCategories = [
   { id: "all", name: "All", icon: "🍽️" },
   { id: "main", name: "Main Course", icon: "🍛" },
   { id: "snacks", name: "Snacks", icon: "🍟" },
+  { id: "soups", name: "Soups", icon: "🍜" },
+  { id: "maggi", name: "Maggi", icon: "🍝" },
   { id: "beverages", name: "Beverages", icon: "🥤" },
   { id: "desserts", name: "Desserts", icon: "🍰" },
 ];
@@ -78,7 +84,7 @@ export const menuItems: MenuItem[] = [
     id: "6",
     name: "White Sauce Pasta",
     description: "Creamy pasta in rich white sauce with herbs and parmesan",
-    price: 85,
+    price: 130,
     category: "main",
     image: whiteSaucePastaNew,
     isVeg: true,
@@ -207,6 +213,44 @@ export const menuItems: MenuItem[] = [
     price: 60,
     category: "desserts",
     image: iceCreamSundae,
+    isVeg: true,
+  },
+  // Soups
+  {
+    id: "22",
+    name: "Manchow Soup",
+    description: "Spicy Indo-Chinese soup with crispy fried noodles on top",
+    price: 60,
+    category: "soups",
+    image: manchowSoup,
+    isVeg: true,
+  },
+  // Maggi
+  {
+    id: "23",
+    name: "Plain Maggi",
+    description: "Classic Maggi noodles with original masala seasoning",
+    price: 50,
+    category: "maggi",
+    image: plainMaggi,
+    isVeg: true,
+  },
+  {
+    id: "24",
+    name: "Veg Maggi",
+    description: "Maggi noodles loaded with fresh vegetables",
+    price: 60,
+    category: "maggi",
+    image: vegMaggi,
+    isVeg: true,
+  },
+  {
+    id: "25",
+    name: "Cheese Maggi",
+    description: "Maggi noodles topped with melted cheese",
+    price: 70,
+    category: "maggi",
+    image: cheeseMaggi,
     isVeg: true,
   },
 ];
