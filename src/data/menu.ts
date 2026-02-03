@@ -163,11 +163,20 @@ export const menuItems: MenuItem[] = [
   },
   {
     id: "12",
-    name: "Masala Chai",
-    description: "Traditional Indian spiced tea with milk",
-    price: 20,
+    name: "Tea",
+    description: "Fresh brewed tea with milk, a classic refreshing beverage",
+    price: 15,
     category: "beverages",
     image: masalaChaiNew,
+    isVeg: true,
+  },
+  {
+    id: "26",
+    name: "Coffee",
+    description: "Hot brewed coffee with milk, rich and aromatic",
+    price: 20,
+    category: "beverages",
+    image: coldCoffee,
     isVeg: true,
   },
   {
