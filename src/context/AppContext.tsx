@@ -17,7 +17,7 @@ interface AppContextType {
   updateSpecialInstructions: (instructions: string) => void;
   setIsParcel: (isParcel: boolean) => void;
   clearCart: () => void;
-  placeOrder: () => Promise<Order | null>;
+  placeOrder: (userLocation?: { latitude: number; longitude: number }) => Promise<Order | null>;
   login: (name: string, email: string) => void;
   logout: () => void;
   cartTotal: number;
