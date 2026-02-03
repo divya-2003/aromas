@@ -5,6 +5,13 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// Alliance University campus location
+const COLLEGE_LOCATION = {
+  latitude: 12.730493,
+  longitude: 77.706792,
+};
+const ALLOWED_RADIUS_METERS = 2000; // 2km radius
+
 // Menu items with validated prices (server-side source of truth)
 const MENU_ITEMS: Record<string, { name: string; price: number }> = {
   "1": { name: "Butter Chicken", price: 180 },
@@ -37,6 +44,44 @@ interface OrderItem {
 interface CreateOrderRequest {
   items: OrderItem[];
   specialInstructions?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+// Haversine formula to calculate distance between two coordinates
+function calculateDistance(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number {
+  const R = 6371e3; // Earth's radius in meters
+  const φ1 = (lat1 * Math.PI) / 180;
+  const φ2 = (lat2 * Math.PI) / 180;
+  const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+  const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+
+  const a =
+    Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+    Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c;
+}
+
+// Simple HTML sanitization - strips all HTML tags
+function sanitizeText(input: string): string {
+  if (typeof input !== 'string') return '';
+  // Remove HTML tags and decode common entities
+  return input
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#x27;/g, "'")
+    .replace(/&#x2F;/g, '/')
+    .trim();
 }
 
 Deno.serve(async (req) => {
@@ -49,7 +94,6 @@ Deno.serve(async (req) => {
     // Get authorization header
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      console.error('No authorization header provided');
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -66,22 +110,42 @@ Deno.serve(async (req) => {
     // Get user from JWT
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
-      console.error('Auth error:', authError);
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log('Creating order for user:', user.id);
-
     // Parse request body
     const body: CreateOrderRequest = await req.json();
-    const { items, specialInstructions } = body;
+    const { items, specialInstructions, latitude, longitude } = body;
+
+    // Validate location - server-side enforcement
+    if (typeof latitude !== 'number' || typeof longitude !== 'number' ||
+        isNaN(latitude) || isNaN(longitude) ||
+        latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+      return new Response(
+        JSON.stringify({ error: 'Valid location required to place order' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const distance = calculateDistance(
+      latitude,
+      longitude,
+      COLLEGE_LOCATION.latitude,
+      COLLEGE_LOCATION.longitude
+    );
+
+    if (distance > ALLOWED_RADIUS_METERS) {
+      return new Response(
+        JSON.stringify({ error: 'Orders can only be placed from within campus premises' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Validate items array
     if (!items || !Array.isArray(items) || items.length === 0) {
-      console.error('Invalid items array');
       return new Response(
         JSON.stringify({ error: 'Order must contain at least one item' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -96,9 +160,8 @@ Deno.serve(async (req) => {
       // Validate item ID exists
       const menuItem = MENU_ITEMS[item.id];
       if (!menuItem) {
-        console.error('Invalid item ID:', item.id);
         return new Response(
-          JSON.stringify({ error: `Invalid item: ${item.id}` }),
+          JSON.stringify({ error: 'Invalid menu item selected' }),
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
@@ -106,22 +169,23 @@ Deno.serve(async (req) => {
       // Validate quantity
       const quantity = Math.floor(Number(item.quantity));
       if (quantity < 1 || quantity > 20) {
-        console.error('Invalid quantity:', quantity);
         return new Response(
-          JSON.stringify({ error: `Invalid quantity for ${menuItem.name}` }),
+          JSON.stringify({ error: 'Item quantity must be between 1 and 20' }),
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
-      // Use server-side price (ignore client-submitted price)
+      // Sanitize and use server-side price (ignore client-submitted price)
       validatedItems.push({
         id: item.id,
         name: menuItem.name,
         price: menuItem.price,
         quantity,
-        customizations: Array.isArray(item.customizations) ? item.customizations.slice(0, 10) : [],
+        customizations: Array.isArray(item.customizations) 
+          ? item.customizations.slice(0, 10).map(c => sanitizeText(String(c)).slice(0, 100))
+          : [],
         specialInstructions: typeof item.specialInstructions === 'string' 
-          ? item.specialInstructions.slice(0, 500) 
+          ? sanitizeText(item.specialInstructions).slice(0, 500) 
           : undefined
       });
 
@@ -134,7 +198,7 @@ Deno.serve(async (req) => {
 
     // Sanitize special instructions
     const sanitizedInstructions = typeof specialInstructions === 'string' 
-      ? specialInstructions.slice(0, 1000) 
+      ? sanitizeText(specialInstructions).slice(0, 1000) 
       : null;
 
     // Insert order into database
@@ -152,14 +216,11 @@ Deno.serve(async (req) => {
       .single();
 
     if (insertError) {
-      console.error('Insert error:', insertError);
       return new Response(
         JSON.stringify({ error: 'Failed to create order' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    console.log('Order created successfully:', order.id);
 
     return new Response(
       JSON.stringify({ 
@@ -177,8 +238,7 @@ Deno.serve(async (req) => {
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
-  } catch (error) {
-    console.error('Unexpected error:', error);
+  } catch (_error) {
     return new Response(
       JSON.stringify({ error: 'Internal server error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
