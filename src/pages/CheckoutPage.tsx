@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import { toast } from "@/hooks/use-toast";
 import { LocationGate, LocationBadge } from "@/components/LocationGate";
-import { useLocation } from "@/hooks/useLocation";
+import { useLocation as useGeoLocation } from "@/hooks/useLocation";
 
 const paymentMethods = [
   { id: "upi", name: "UPI", icon: Smartphone, description: "Google Pay, PhonePe, Paytm" },
@@ -19,7 +19,7 @@ const CheckoutPage = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const { cart, cartTotal, placeOrder, isAuthenticated, isParcel, parcelCharge, grandTotal } = useApp();
   const navigate = useNavigate();
-  const { isWithinPremises, isLoading: isLocationLoading } = useLocation();
+  const { isWithinPremises, isLoading: isLocationLoading, coordinates } = useGeoLocation();
 
   const handlePlaceOrder = async () => {
     if (!isAuthenticated) {
@@ -46,7 +46,7 @@ const CheckoutPage = () => {
     // Simulate payment processing
     await new Promise((resolve) => setTimeout(resolve, 2000));
     
-    const order = await placeOrder();
+    const order = await placeOrder(coordinates || undefined);
     setIsProcessing(false);
 
     if (order) {

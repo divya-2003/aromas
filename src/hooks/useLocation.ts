@@ -16,6 +16,7 @@ interface LocationState {
   error: string | null;
   distance: number | null;
   hasPermission: boolean | null;
+  coordinates: { latitude: number; longitude: number } | null;
 }
 
 // Haversine formula to calculate distance between two coordinates
@@ -46,6 +47,7 @@ export function useLocation() {
     error: null,
     distance: null,
     hasPermission: null,
+    coordinates: null,
   });
 
   const checkLocation = useCallback(() => {
@@ -58,6 +60,7 @@ export function useLocation() {
         error: "Geolocation is not supported by your browser",
         distance: null,
         hasPermission: false,
+        coordinates: null,
       });
       return;
     }
@@ -72,11 +75,6 @@ export function useLocation() {
           COLLEGE_LOCATION.longitude
         );
 
-        // Debug: Log coordinates and distance
-        console.log("Your location:", latitude, longitude);
-        console.log("Campus location:", COLLEGE_LOCATION.latitude, COLLEGE_LOCATION.longitude);
-        console.log("Distance (meters):", Math.round(distance));
-        console.log("Allowed radius:", ALLOWED_RADIUS_METERS);
 
         const isWithin = distance <= ALLOWED_RADIUS_METERS;
 
@@ -86,6 +84,7 @@ export function useLocation() {
           error: null,
           distance: Math.round(distance),
           hasPermission: true,
+          coordinates: { latitude, longitude },
         });
       },
       (error) => {
@@ -109,6 +108,7 @@ export function useLocation() {
           error: errorMessage,
           distance: null,
           hasPermission: error.code !== error.PERMISSION_DENIED ? null : false,
+          coordinates: null,
         });
       },
       {
