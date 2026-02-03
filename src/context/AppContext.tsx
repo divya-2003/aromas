@@ -218,8 +218,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const parcelCharge = isParcel ? 10 : 0;
   const grandTotal = cartTotal + parcelCharge;
 
-  const placeOrder = async (): Promise<Order | null> => {
+  const placeOrder = async (userLocation?: { latitude: number; longitude: number }): Promise<Order | null> => {
     if (cart.length === 0) return null;
+
+    // Require location for order placement (server will validate)
+    if (!userLocation) {
+      toast({
+        title: "Location required",
+        description: "Please enable location services to place your order.",
+        variant: "destructive",
+      });
+      return null;
+    }
 
     try {
       // Call server-side edge function for validated order creation
@@ -234,6 +244,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
             specialInstructions: item.specialInstructions,
           })),
           specialInstructions,
+          latitude: userLocation.latitude,
+          longitude: userLocation.longitude,
         },
       });
 
