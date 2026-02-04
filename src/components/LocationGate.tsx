@@ -131,7 +131,7 @@ export function LocationBadge() {
               <CheckCircle className="h-3.5 w-3.5 text-success" />
             </div>
             <p className="text-xs text-muted-foreground truncate max-w-[200px]">
-              {collegeName} • {distance}m away
+              {collegeName}
             </p>
           </div>
         </div>
@@ -156,7 +156,7 @@ export function LocationBadge() {
             <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
           </div>
           <p className="text-xs text-muted-foreground truncate max-w-[200px]">
-            {distance}m from {collegeName}
+            {collegeName}
           </p>
         </div>
       </div>
