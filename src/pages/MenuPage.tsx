@@ -105,8 +105,8 @@ const MenuPage = () => {
             />
           </div>
 
-          {/* Veg/Non-Veg Filter - Only show for Main Course */}
-          {activeCategory === "main" && (
+          {/* Veg/Non-Veg Filter - Only show for All section */}
+          {activeCategory === "all" && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
