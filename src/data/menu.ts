@@ -6,11 +6,9 @@ import chickenBiryani from "@/assets/chicken-biryani.jpg";
 import frenchFriesNew from "@/assets/french-fries-new.jpg";
 import chickenMomosNew from "@/assets/chicken-momos-new.jpg";
 import masalaChaiNew from "@/assets/masala-chai-new.jpg";
-import coldCoffee from "@/assets/cold-coffee.jpg";
 import hotCoffee from "@/assets/hot-coffee.jpg";
 import limeSoda from "@/assets/lime-soda.jpg";
 import gulabJamun from "@/assets/gulab-jamun.jpg";
-import iceCreamSundae from "@/assets/ice-cream-sundae.jpg";
 import whiteSaucePastaNew from "@/assets/white-sauce-pasta-new.jpg";
 import redSaucePastaNew from "@/assets/red-sauce-pasta-new.jpg";
 import pinkSaucePasta from "@/assets/pink-sauce-pasta.jpg";
@@ -181,15 +179,6 @@ export const menuItems: MenuItem[] = [
     isVeg: true,
   },
   {
-    id: "13",
-    name: "Cold Coffee",
-    description: "Refreshing iced coffee blended with milk and cream",
-    price: 50,
-    category: "beverages",
-    image: coldCoffee,
-    isVeg: true,
-  },
-  {
     id: "14",
     name: "Fresh Lime Soda",
     description: "Tangy lime with soda, choice of sweet or salted",
@@ -216,16 +205,6 @@ export const menuItems: MenuItem[] = [
     image: gulabJamun,
     isVeg: true,
   },
-  {
-    id: "16",
-    name: "Ice Cream Sundae",
-    description: "Vanilla ice cream with chocolate sauce and nuts",
-    price: 60,
-    category: "desserts",
-    image: iceCreamSundae,
-    isVeg: true,
-  },
-  // Soups
   {
     id: "22",
     name: "Manchow Soup",
