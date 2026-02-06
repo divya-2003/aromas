@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useNavigate } from "react-router-dom";
-import { LocationGate, LocationBadge } from "@/components/LocationGate";
 interface CartSheetProps {
   isOpen: boolean;
   onClose: () => void;
@@ -51,15 +50,12 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
           >
             {/* Header */}
             <div className="flex items-center justify-between border-b border-border p-4">
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <ShoppingBag className="h-5 w-5 text-primary" />
-                  <h2 className="text-lg font-semibold">Your Cart</h2>
-                  <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-semibold text-primary-foreground">
-                    {cart.length}
-                  </span>
-                </div>
-                <LocationBadge />
+              <div className="flex items-center gap-2">
+                <ShoppingBag className="h-5 w-5 text-primary" />
+                <h2 className="text-lg font-semibold">Your Cart</h2>
+                <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-semibold text-primary-foreground">
+                  {cart.length}
+                </span>
               </div>
               <Button variant="ghost" size="icon" onClick={onClose}>
                 <X className="h-5 w-5" />
@@ -148,87 +144,85 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
 
             {/* Special Instructions & Footer */}
             {cart.length > 0 && (
-              <LocationGate>
-                <div className="border-t border-border p-4 space-y-4">
-                  {/* Parcel Option */}
-                  <div className="flex items-center justify-between rounded-xl bg-card p-3">
-                    <div className="flex items-center gap-3">
-                      <div className="rounded-full bg-muted p-2">
-                        <Package className="h-4 w-4 text-muted-foreground" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium">Parcel</p>
-                        <p className="text-xs text-muted-foreground">+₹10 packaging charge</p>
-                      </div>
+              <div className="border-t border-border p-4 space-y-4">
+                {/* Parcel Option */}
+                <div className="flex items-center justify-between rounded-xl bg-card p-3">
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-full bg-muted p-2">
+                      <Package className="h-4 w-4 text-muted-foreground" />
                     </div>
-                    <Switch
-                      checked={isParcel}
-                      onCheckedChange={setIsParcel}
-                    />
-                  </div>
-
-                  {/* Special Instructions */}
-                  <div>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-start gap-2"
-                      onClick={() => setShowInstructions(!showInstructions)}
-                    >
-                      <FileText className="h-4 w-4" />
-                      {instructions ? "Edit Special Instructions" : "Add Special Instructions"}
-                    </Button>
-                    
-                    <AnimatePresence>
-                      {showInstructions && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden"
-                        >
-                          <div className="mt-3 space-y-2">
-                            <Textarea
-                              placeholder="E.g., Less spicy, no onions, extra sauce..."
-                              value={instructions}
-                              onChange={(e) => setInstructions(e.target.value)}
-                              className="min-h-[80px]"
-                            />
-                            <Button size="sm" onClick={handleSaveInstructions}>
-                              Save Instructions
-                            </Button>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                    
-                    {instructions && !showInstructions && (
-                      <p className="mt-2 text-xs text-muted-foreground italic">
-                        "{instructions}"
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Subtotal</span>
-                      <span>₹{cartTotal}</span>
-                    </div>
-                    {isParcel && (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Parcel Charge</span>
-                        <span>₹{parcelCharge}</span>
-                      </div>
-                    )}
-                    <div className="flex items-center justify-between pt-2 border-t border-border">
-                      <span className="text-muted-foreground">Total</span>
-                      <span className="text-2xl font-bold">₹{grandTotal}</span>
+                    <div>
+                      <p className="text-sm font-medium">Parcel</p>
+                      <p className="text-xs text-muted-foreground">+₹10 packaging charge</p>
                     </div>
                   </div>
-                  <Button className="w-full" size="lg" onClick={handleCheckout}>
-                    Proceed to Checkout
-                  </Button>
+                  <Switch
+                    checked={isParcel}
+                    onCheckedChange={setIsParcel}
+                  />
                 </div>
-              </LocationGate>
+
+                {/* Special Instructions */}
+                <div>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2"
+                    onClick={() => setShowInstructions(!showInstructions)}
+                  >
+                    <FileText className="h-4 w-4" />
+                    {instructions ? "Edit Special Instructions" : "Add Special Instructions"}
+                  </Button>
+                  
+                  <AnimatePresence>
+                    {showInstructions && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="mt-3 space-y-2">
+                          <Textarea
+                            placeholder="E.g., Less spicy, no onions, extra sauce..."
+                            value={instructions}
+                            onChange={(e) => setInstructions(e.target.value)}
+                            className="min-h-[80px]"
+                          />
+                          <Button size="sm" onClick={handleSaveInstructions}>
+                            Save Instructions
+                          </Button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  
+                  {instructions && !showInstructions && (
+                    <p className="mt-2 text-xs text-muted-foreground italic">
+                      "{instructions}"
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span>₹{cartTotal}</span>
+                  </div>
+                  {isParcel && (
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Parcel Charge</span>
+                      <span>₹{parcelCharge}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between pt-2 border-t border-border">
+                    <span className="text-muted-foreground">Total</span>
+                    <span className="text-2xl font-bold">₹{grandTotal}</span>
+                  </div>
+                </div>
+                <Button className="w-full" size="lg" onClick={handleCheckout}>
+                  Proceed to Checkout
+                </Button>
+              </div>
             )}
           </motion.div>
         </>
