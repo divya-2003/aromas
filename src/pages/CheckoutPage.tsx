@@ -1,17 +1,15 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, CreditCard, Smartphone, Wallet } from "lucide-react";
+import { ArrowLeft, CreditCard, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import { toast } from "@/hooks/use-toast";
-import { LocationGate, LocationBadge } from "@/components/LocationGate";
 import { useLocation as useGeoLocation } from "@/hooks/useLocation";
 
 const paymentMethods = [
   { id: "upi", name: "UPI", icon: Smartphone, description: "Google Pay, PhonePe, Paytm" },
   { id: "card", name: "Card", icon: CreditCard, description: "Credit/Debit Card" },
-  { id: "wallet", name: "Wallet", icon: Wallet, description: "Campus Wallet" },
 ];
 
 const CheckoutPage = () => {
@@ -188,8 +186,7 @@ const CheckoutPage = () => {
       </main>
 
       {/* Fixed Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 border-t border-border bg-background p-4 space-y-2">
-        <LocationBadge />
+      <div className="fixed bottom-0 left-0 right-0 border-t border-border bg-background p-4">
         <Button
           className="w-full"
           size="lg"
