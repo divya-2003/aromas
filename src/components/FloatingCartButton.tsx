@@ -14,24 +14,20 @@ export function FloatingCartButton({ onClick }: FloatingCartButtonProps) {
   return (
     <AnimatePresence>
       <motion.button
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 100, opacity: 0 }}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0, opacity: 0 }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
         onClick={onClick}
-        className="fixed bottom-6 left-4 right-4 z-30 flex items-center justify-between rounded-2xl gradient-warm p-4 shadow-glow"
+        className="fixed bottom-6 right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full gradient-warm shadow-glow"
       >
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <ShoppingBag className="h-6 w-6 text-primary-foreground" />
-            <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-card text-xs font-bold text-primary">
-              {cartItemCount}
-            </span>
-          </div>
-          <span className="font-semibold text-primary-foreground">View Cart</span>
+        <div className="relative">
+          <ShoppingBag className="h-6 w-6 text-primary-foreground" />
+          <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-card text-xs font-bold text-primary">
+            {cartItemCount}
+          </span>
         </div>
-        <span className="text-lg font-bold text-primary-foreground">₹{cartTotal}</span>
       </motion.button>
     </AnimatePresence>
   );
