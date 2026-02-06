@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 
 type AuthMode = "signup" | "login" | "forgot-password";
 
@@ -283,11 +284,8 @@ const AuthPage = () => {
                     disabled={isGoogleLoading}
                     onClick={async () => {
                       setIsGoogleLoading(true);
-                      const { error } = await supabase.auth.signInWithOAuth({
-                        provider: 'google',
-                        options: {
-                          redirectTo: `${window.location.origin}/`,
-                        },
+                      const { error } = await lovable.auth.signInWithOAuth("google", {
+                        redirect_uri: window.location.origin,
                       });
                       if (error) {
                         toast({
