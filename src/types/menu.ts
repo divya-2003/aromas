@@ -22,7 +22,10 @@ export interface Order {
   status: OrderStatus;
   placedAt: Date;
   estimatedReadyTime: Date;
+  readyAt?: Date;
   specialInstructions?: string;
+  feedbackRating?: number;
+  feedbackComment?: string;
 }
 
 export type OrderStatus = 

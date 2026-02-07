@@ -96,7 +96,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
           status: order.status as OrderStatus,
           placedAt: new Date(order.placed_at),
           estimatedReadyTime: order.estimated_ready_time ? new Date(order.estimated_ready_time) : undefined,
+          readyAt: order.ready_at ? new Date(order.ready_at) : undefined,
           specialInstructions: order.special_instructions,
+          feedbackRating: order.feedback_rating,
+          feedbackComment: order.feedback_comment,
         }));
         setOrders(mappedOrders);
       }
@@ -124,7 +127,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
               status: newOrder.status as OrderStatus,
               placedAt: new Date(newOrder.placed_at),
               estimatedReadyTime: newOrder.estimated_ready_time ? new Date(newOrder.estimated_ready_time) : undefined,
+              readyAt: newOrder.ready_at ? new Date(newOrder.ready_at) : undefined,
               specialInstructions: newOrder.special_instructions,
+              feedbackRating: newOrder.feedback_rating,
+              feedbackComment: newOrder.feedback_comment,
             };
             setOrders(prev => [mappedOrder, ...prev.filter(o => o.id !== mappedOrder.id)]);
           } else if (payload.eventType === 'UPDATE') {
@@ -135,6 +141,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
                     ...order,
                     status: updatedOrder.status as OrderStatus,
                     estimatedReadyTime: updatedOrder.estimated_ready_time ? new Date(updatedOrder.estimated_ready_time) : undefined,
+                    readyAt: updatedOrder.ready_at ? new Date(updatedOrder.ready_at) : undefined,
+                    feedbackRating: updatedOrder.feedback_rating,
+                    feedbackComment: updatedOrder.feedback_comment,
                   }
                 : order
             ));
