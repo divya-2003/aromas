@@ -59,7 +59,7 @@ const AuthPage = () => {
         if (data.user) {
           const userName = data.user.user_metadata?.name || normalizedEmail.split("@")[0];
           login(userName, normalizedEmail);
-          toast({ title: "Welcome back!", description: "You've been logged in successfully" });
+          toast({ title: "Welcome!", description: "You've been logged in successfully" });
           navigate("/");
         }
       } else {
@@ -141,7 +141,7 @@ const AuthPage = () => {
   const getTitle = () => {
     switch (mode) {
       case "forgot-password": return "Reset Password";
-      case "login": return "Welcome back!";
+      case "login": return "Welcome!";
       default: return "Join Aromas";
     }
   };
