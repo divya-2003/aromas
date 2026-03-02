@@ -124,7 +124,8 @@ function CancelSection({ order }: { order: Order }) {
       .eq("id", order.id);
 
     if (error) {
-      toast({ title: "Failed to cancel order", description: error.message, variant: "destructive" });
+      console.error('Order cancellation error:', error);
+      toast({ title: "Failed to cancel order", description: "Unable to cancel order. Please try again later.", variant: "destructive" });
     } else {
       toast({ title: "Order cancelled" });
     }
@@ -191,7 +192,8 @@ function FeedbackSection({ order }: { order: Order }) {
       .eq("id", order.id);
 
     if (error) {
-      toast({ title: "Failed to submit feedback", variant: "destructive" });
+      console.error('Feedback submission error:', error);
+      toast({ title: "Failed to submit feedback", description: "Please try again later.", variant: "destructive" });
     } else {
       setSubmitted(true);
       toast({ title: "Feedback submitted! 🎉" });
