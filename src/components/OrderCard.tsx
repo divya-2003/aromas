@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Order, OrderStatus } from "@/types/menu";
-import { Clock, CheckCircle, ChefHat, Package, Star, Timer } from "lucide-react";
+import { Clock, CheckCircle, ChefHat, Package, Star, Timer, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,9 +32,15 @@ const statusConfig: Record<OrderStatus, { label: string; color: string; icon: Re
     color: "bg-muted text-muted-foreground",
     icon: <Package className="h-4 w-4" />,
   },
+  cancelled: {
+    label: "Cancelled",
+    color: "bg-destructive/20 text-destructive",
+    icon: <XCircle className="h-4 w-4" />,
+  },
 };
 
 const PICKUP_WINDOW_MINUTES = 15;
+const CANCEL_WINDOW_MINUTES = 5;
 
 function getTimeDiffMinutes(from: Date, to: Date) {
   return Math.round((to.getTime() - from.getTime()) / 60000);
@@ -83,6 +89,65 @@ function PickupCountdown({ readyAt }: { readyAt: Date }) {
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.5 }}
         />
+      </div>
+    </div>
+  );
+}
+
+function CancelSection({ order }: { order: Order }) {
+  const [remainingMs, setRemainingMs] = useState(() => {
+    const deadline = new Date(order.placedAt.getTime() + CANCEL_WINDOW_MINUTES * 60000);
+    return Math.max(0, deadline.getTime() - Date.now());
+  });
+  const [isCancelling, setIsCancelling] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const deadline = new Date(order.placedAt.getTime() + CANCEL_WINDOW_MINUTES * 60000);
+      const left = Math.max(0, deadline.getTime() - Date.now());
+      setRemainingMs(left);
+      if (left <= 0) clearInterval(interval);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [order.placedAt]);
+
+  if (remainingMs <= 0) return null;
+
+  const mins = Math.floor(remainingMs / 60000);
+  const secs = Math.floor((remainingMs % 60000) / 1000);
+
+  const handleCancel = async () => {
+    setIsCancelling(true);
+    const { error } = await supabase
+      .from("orders")
+      .update({ status: "cancelled" })
+      .eq("id", order.id);
+
+    if (error) {
+      toast({ title: "Failed to cancel order", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Order cancelled" });
+    }
+    setIsCancelling(false);
+  };
+
+  return (
+    <div className="mt-3 rounded-xl border border-destructive/30 bg-destructive/5 p-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Timer className="h-4 w-4 text-destructive" />
+          <span className="text-sm text-muted-foreground">
+            Cancel within {mins}:{secs.toString().padStart(2, "0")}
+          </span>
+        </div>
+        <Button
+          size="sm"
+          variant="destructive"
+          onClick={handleCancel}
+          disabled={isCancelling}
+        >
+          {isCancelling ? "Cancelling..." : "Cancel Order"}
+        </Button>
       </div>
     </div>
   );
@@ -209,44 +274,49 @@ export function OrderCard({ order }: OrderCardProps) {
           <span className="text-lg font-bold text-primary">₹{order.totalAmount}</span>
         </div>
 
-        {/* Progress */}
-        <div className="mt-4">
-          <div className="flex justify-between">
-            {(["placed", "preparing", "ready", "picked_up"] as OrderStatus[]).map((step, index) => {
-              const isCompleted =
-                (["placed", "preparing", "ready", "picked_up"] as OrderStatus[]).indexOf(order.status) >= index;
-              const isCurrent = order.status === step;
+        {/* Progress - hide for cancelled orders */}
+        {order.status !== "cancelled" && (
+          <div className="mt-4">
+            <div className="flex justify-between">
+              {(["placed", "preparing", "ready", "picked_up"] as OrderStatus[]).map((step, index) => {
+                const isCompleted =
+                  (["placed", "preparing", "ready", "picked_up"] as OrderStatus[]).indexOf(order.status) >= index;
+                const isCurrent = order.status === step;
 
-              return (
-                <div key={step} className="flex flex-col items-center">
-                  <div
-                    className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition-all ${
-                      isCompleted
-                        ? "gradient-warm text-primary-foreground"
-                        : "bg-muted text-muted-foreground"
-                    } ${isCurrent ? "ring-4 ring-primary/20" : ""}`}
-                  >
-                    {index + 1}
+                return (
+                  <div key={step} className="flex flex-col items-center">
+                    <div
+                      className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition-all ${
+                        isCompleted
+                          ? "gradient-warm text-primary-foreground"
+                          : "bg-muted text-muted-foreground"
+                      } ${isCurrent ? "ring-4 ring-primary/20" : ""}`}
+                    >
+                      {index + 1}
+                    </div>
+                    <span className="mt-1 text-[10px] text-muted-foreground">
+                      {statusConfig[step].label.split(" ")[0]}
+                    </span>
                   </div>
-                  <span className="mt-1 text-[10px] text-muted-foreground">
-                    {statusConfig[step].label.split(" ")[0]}
-                  </span>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
+            <div className="relative mt-2 h-1 w-full rounded-full bg-muted">
+              <motion.div
+                initial={{ width: "0%" }}
+                animate={{
+                  width: `${
+                    (["placed", "preparing", "ready", "picked_up"] as OrderStatus[]).indexOf(order.status) * 33.33 + 16.67
+                  }%`,
+                }}
+                className="absolute left-0 h-full rounded-full gradient-warm"
+              />
+            </div>
           </div>
-          <div className="relative mt-2 h-1 w-full rounded-full bg-muted">
-            <motion.div
-              initial={{ width: "0%" }}
-              animate={{
-                width: `${
-                  (["placed", "preparing", "ready", "picked_up"] as OrderStatus[]).indexOf(order.status) * 33.33 + 16.67
-                }%`,
-              }}
-              className="absolute left-0 h-full rounded-full gradient-warm"
-            />
-          </div>
-        </div>
+        )}
+
+        {/* Cancel option within 5 minutes of placing */}
+        {order.status === "placed" && <CancelSection order={order} />}
 
         {/* Pickup countdown when order is ready */}
         {order.status === "ready" && order.readyAt && (

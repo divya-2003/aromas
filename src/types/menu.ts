@@ -32,7 +32,8 @@ export type OrderStatus =
   | "placed" 
   | "preparing" 
   | "ready" 
-  | "picked_up";
+  | "picked_up"
+  | "cancelled";
 
 export interface User {
   id: string;
