@@ -86,8 +86,9 @@ Deno.serve(async (req) => {
       .eq('id', orderId);
 
     if (updateError) {
+      console.error('Update error:', JSON.stringify(updateError));
       return new Response(
-        JSON.stringify({ error: 'Failed to update order status' }),
+        JSON.stringify({ error: 'Failed to update order status', details: updateError.message }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
