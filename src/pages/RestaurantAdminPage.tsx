@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChefHat, CheckCircle, Clock, Package, Bell } from "lucide-react";
+import { ChefHat, CheckCircle, Clock, Package, Bell, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface OrderItem {
   id: string;
@@ -42,8 +43,19 @@ export default function RestaurantAdminPage() {
   const [selectedOrder, setSelectedOrder] = useState<AdminOrder | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [newOrderAlert, setNewOrderAlert] = useState<AdminOrder | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      setIsAuthenticated(!!session?.user);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
     fetchOrders();
 
     // Poll every 15 seconds as fallback
@@ -73,7 +85,7 @@ export default function RestaurantAdminPage() {
       clearInterval(interval);
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [isAuthenticated]);
 
   const fetchOrders = async () => {
     const { data, error } = await supabase.functions.invoke('get-admin-orders');
@@ -112,6 +124,30 @@ export default function RestaurantAdminPage() {
 
   const activeOrders = orders.filter(o => ['placed', 'preparing', 'ready'].includes(o.status));
   const completedOrders = orders.filter(o => o.status === 'picked_up');
+
+  if (isAuthenticated === null) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <ChefHat className="h-12 w-12 mx-auto text-primary" />
+          <h1 className="text-2xl font-bold">Restaurant Dashboard</h1>
+          <p className="text-muted-foreground">Please sign in to access the admin panel</p>
+          <Button size="lg" onClick={() => navigate("/auth")}>
+            <LogIn className="h-4 w-4 mr-2" />
+            Sign In
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
