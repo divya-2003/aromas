@@ -53,12 +53,55 @@ export default function RestaurantAdminPage() {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Request notification permission on mount
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  const playNotificationSound = () => {
+    try {
+      const ctx = new AudioContext();
+      const oscillator = ctx.createOscillator();
+      const gain = ctx.createGain();
+      oscillator.connect(gain);
+      gain.connect(ctx.destination);
+      oscillator.frequency.value = 880;
+      oscillator.type = 'sine';
+      gain.gain.value = 0.3;
+      oscillator.start();
+      oscillator.stop(ctx.currentTime + 0.3);
+      setTimeout(() => {
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.frequency.value = 1100;
+        osc2.type = 'sine';
+        gain2.gain.value = 0.3;
+        osc2.start();
+        osc2.stop(ctx.currentTime + 0.3);
+      }, 300);
+    } catch (_) { /* ignore audio errors */ }
+  };
+
+  const sendBrowserNotification = (order: AdminOrder) => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      const items = (Array.isArray(order.items) ? order.items : []) as OrderItem[];
+      const body = items.map(i => `${i.quantity}x ${i.name}`).join(', ');
+      new Notification('🔔 New Order!', {
+        body: `Order #${order.id.slice(0, 8)} — ${body} — ₹${order.total_amount}`,
+        icon: '/favicon.ico',
+      });
+    }
+  };
+
   useEffect(() => {
     if (!isAuthenticated) return;
 
     fetchOrders();
 
-    // Poll every 15 seconds as fallback
     const interval = setInterval(fetchOrders, 15000);
 
     const channel = supabase
@@ -71,6 +114,8 @@ export default function RestaurantAdminPage() {
             return [newOrder, ...prev];
           });
           setNewOrderAlert(newOrder);
+          playNotificationSound();
+          sendBrowserNotification(newOrder);
         } else if (payload.eventType === 'UPDATE') {
           const updated = payload.new as AdminOrder;
           setOrders(prev => prev.map(o => o.id === updated.id ? updated : o));
