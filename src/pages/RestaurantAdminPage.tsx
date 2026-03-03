@@ -46,12 +46,18 @@ export default function RestaurantAdminPage() {
   useEffect(() => {
     fetchOrders();
 
+    // Poll every 15 seconds as fallback
+    const interval = setInterval(fetchOrders, 15000);
+
     const channel = supabase
       .channel('admin-orders')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
         if (payload.eventType === 'INSERT') {
           const newOrder = payload.new as AdminOrder;
-          setOrders(prev => [newOrder, ...prev]);
+          setOrders(prev => {
+            if (prev.some(o => o.id === newOrder.id)) return prev;
+            return [newOrder, ...prev];
+          });
           setNewOrderAlert(newOrder);
         } else if (payload.eventType === 'UPDATE') {
           const updated = payload.new as AdminOrder;
@@ -63,18 +69,15 @@ export default function RestaurantAdminPage() {
       })
       .subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      clearInterval(interval);
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchOrders = async () => {
-    const { data, error } = await supabase
-      .from('orders')
-      .select('*')
-      .in('status', ['placed', 'preparing', 'ready', 'picked_up'])
-      .order('placed_at', { ascending: false })
-      .limit(50);
-
-    if (!error && data) setOrders(data as unknown as AdminOrder[]);
+    const { data, error } = await supabase.functions.invoke('get-admin-orders');
+    if (!error && data?.orders) setOrders(data.orders as AdminOrder[]);
   };
 
   const updateStatus = async (orderId: string, newStatus: string) => {
