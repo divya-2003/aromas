@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, CreditCard, Smartphone } from "lucide-react";
+import { ArrowLeft, Copy, CreditCard, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
@@ -142,7 +142,7 @@ const CheckoutPage = () => {
         >
           <h2 className="font-semibold">Payment Method</h2>
           <div className="mt-4 space-y-3">
-            {paymentMethods.map((method) => (
+        {paymentMethods.map((method) => (
               <button
                 key={method.id}
                 onClick={() => setSelectedPayment(method.id)}
@@ -181,6 +181,44 @@ const CheckoutPage = () => {
               </button>
             ))}
           </div>
+
+          {/* UPI Instructions */}
+          {selectedPayment === "upi" && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-4 rounded-xl border-2 border-primary/30 bg-accent/50 p-4 space-y-3"
+            >
+              <h3 className="font-semibold text-sm flex items-center gap-2">
+                <Smartphone className="h-4 w-4 text-primary" />
+                How to pay via UPI
+              </h3>
+              <ol className="text-sm text-muted-foreground space-y-2 list-decimal list-inside">
+                <li>Open any UPI app (Google Pay, PhonePe, Paytm, etc.)</li>
+                <li>Tap on <span className="font-medium text-foreground">"Pay"</span> or <span className="font-medium text-foreground">"Send Money"</span></li>
+                <li>
+                  Enter this UPI ID:{" "}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText("sukhsagar@upi");
+                      toast({ title: "Copied!", description: "UPI ID copied to clipboard" });
+                    }}
+                    className="inline-flex items-center gap-1 font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded hover:bg-primary/20 transition-colors"
+                  >
+                    sukhsagar@upi
+                    <Copy className="h-3 w-3" />
+                  </button>
+                </li>
+                <li>Enter amount: <span className="font-bold text-foreground">₹{grandTotal}</span></li>
+                <li>Complete the payment and tap <span className="font-medium text-foreground">"Place Order"</span> below</li>
+              </ol>
+              <p className="text-xs text-muted-foreground/80 italic">
+                Your order will be confirmed once payment is verified by the restaurant.
+              </p>
+            </motion.div>
+          )}
         </motion.div>
 
       </main>
