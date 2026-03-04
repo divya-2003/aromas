@@ -194,26 +194,39 @@ const CheckoutPage = () => {
                 <Smartphone className="h-4 w-4 text-primary" />
                 How to pay via UPI
               </h3>
-              <ol className="text-sm text-muted-foreground space-y-2 list-decimal list-inside">
-                <li>Open any UPI app (Google Pay, PhonePe, Paytm, etc.)</li>
-                <li>Tap on <span className="font-medium text-foreground">"Pay"</span> or <span className="font-medium text-foreground">"Send Money"</span></li>
-                <li>
-                  Enter this UPI ID:{" "}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      navigator.clipboard.writeText("sukhsagar@upi");
-                      toast({ title: "Copied!", description: "UPI ID copied to clipboard" });
-                    }}
-                    className="inline-flex items-center gap-1 font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded hover:bg-primary/20 transition-colors"
-                  >
-                    sukhsagar@upi
-                    <Copy className="h-3 w-3" />
-                  </button>
-                </li>
-                <li>Enter amount: <span className="font-bold text-foreground">₹{grandTotal}</span></li>
-                <li>Complete the payment and tap <span className="font-medium text-foreground">"Place Order"</span> below</li>
-              </ol>
+              <div className="space-y-3">
+                <a
+                  href={`upi://pay?pa=sukhsagar@upi&pn=Sukh%20Sagar&am=${grandTotal}&cu=INR&tn=Order%20Payment`}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground py-3 px-4 font-semibold text-sm hover:bg-primary/90 transition-colors"
+                >
+                  <Smartphone className="h-5 w-5" />
+                  Pay ₹{grandTotal} via UPI App
+                </a>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <div className="h-px flex-1 bg-border" />
+                  <span>or pay manually</span>
+                  <div className="h-px flex-1 bg-border" />
+                </div>
+                <ol className="text-sm text-muted-foreground space-y-2 list-decimal list-inside">
+                  <li>Open any UPI app (Google Pay, PhonePe, Paytm, etc.)</li>
+                  <li>
+                    Enter UPI ID:{" "}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText("sukhsagar@upi");
+                        toast({ title: "Copied!", description: "UPI ID copied to clipboard" });
+                      }}
+                      className="inline-flex items-center gap-1 font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded hover:bg-primary/20 transition-colors"
+                    >
+                      sukhsagar@upi
+                      <Copy className="h-3 w-3" />
+                    </button>
+                  </li>
+                  <li>Enter amount: <span className="font-bold text-foreground">₹{grandTotal}</span></li>
+                  <li>Complete payment and tap <span className="font-medium text-foreground">"Place Order"</span> below</li>
+                </ol>
+              </div>
               <p className="text-xs text-muted-foreground/80 italic">
                 Your order will be confirmed once payment is verified by the restaurant.
               </p>
