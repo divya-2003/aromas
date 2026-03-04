@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Copy, CreditCard, Smartphone } from "lucide-react";
+import { ArrowLeft, CreditCard, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
@@ -18,6 +18,8 @@ const CheckoutPage = () => {
   const { cart, cartTotal, placeOrder, isAuthenticated, isParcel, parcelCharge, grandTotal } = useApp();
   const navigate = useNavigate();
   const { isWithinPremises, isLoading: isLocationLoading, coordinates } = useGeoLocation();
+
+  const upiUrl = `upi://pay?pa=sukhsagar@upi&pn=Sukh%20Sagar&am=${grandTotal}&cu=INR&tn=Order%20Payment`;
 
   const handlePlaceOrder = async () => {
     if (!isAuthenticated) {
@@ -37,6 +39,11 @@ const CheckoutPage = () => {
         variant: "destructive",
       });
       return;
+    }
+
+    if (selectedPayment === "upi") {
+      // Open UPI app for payment
+      window.location.href = upiUrl;
     }
 
     setIsProcessing(true);
@@ -182,32 +189,6 @@ const CheckoutPage = () => {
             ))}
           </div>
 
-          {/* UPI Instructions */}
-          {selectedPayment === "upi" && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mt-4 rounded-xl border-2 border-primary/30 bg-accent/50 p-4 space-y-3"
-            >
-              <h3 className="font-semibold text-sm flex items-center gap-2">
-                <Smartphone className="h-4 w-4 text-primary" />
-                How to pay via UPI
-              </h3>
-              <div className="space-y-3">
-                <a
-                  href={`upi://pay?pa=sukhsagar@upi&pn=Sukh%20Sagar&am=${grandTotal}&cu=INR&tn=Order%20Payment`}
-                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground py-3 px-4 font-semibold text-sm hover:bg-primary/90 transition-colors"
-                >
-                  <Smartphone className="h-5 w-5" />
-                  Pay ₹{grandTotal} via UPI App
-                </a>
-              </div>
-              <p className="text-xs text-muted-foreground/80 italic">
-                Your order will be confirmed once payment is verified by the restaurant.
-              </p>
-            </motion.div>
-          )}
         </motion.div>
 
       </main>
