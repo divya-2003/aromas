@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChefHat, CheckCircle, Clock, Package, Bell, LogIn } from "lucide-react";
+import { ChefHat, CheckCircle, Clock, Package, Bell, LogIn, ScanLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,6 +13,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { QrScanner } from "@/components/QrScanner";
 
 interface OrderItem {
   id: string;
@@ -44,6 +45,7 @@ export default function RestaurantAdminPage() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [newOrderAlert, setNewOrderAlert] = useState<AdminOrder | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [showScanner, setShowScanner] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
