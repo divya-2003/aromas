@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Order, OrderStatus } from "@/types/menu";
-import { Clock, CheckCircle, ChefHat, Package, Star, Timer, XCircle } from "lucide-react";
+import { Clock, CheckCircle, ChefHat, Package, Star, Timer, XCircle, QrCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { QRCodeSVG } from "qrcode.react";
 
 interface OrderCardProps {
   order: Order;
@@ -319,6 +320,25 @@ export function OrderCard({ order }: OrderCardProps) {
 
         {/* Cancel option within 5 minutes of placing */}
         {order.status === "placed" && <CancelSection order={order} />}
+
+        {/* QR Code for pickup when order is ready */}
+        {order.status === "ready" && order.pickupToken && (
+          <div className="mt-3 rounded-xl bg-card border-2 border-success/30 p-4 text-center space-y-2">
+            <div className="flex items-center justify-center gap-2">
+              <QrCode className="h-4 w-4 text-success" />
+              <span className="text-sm font-semibold text-success">Pickup QR Code</span>
+            </div>
+            <div className="flex justify-center bg-white rounded-lg p-3 inline-block mx-auto">
+              <QRCodeSVG
+                value={JSON.stringify({ orderId: order.id, token: order.pickupToken })}
+                size={160}
+                level="H"
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">Show this QR code at the counter for pickup</p>
+            <p className="text-xs font-mono font-bold text-primary">{order.pickupToken}</p>
+          </div>
+        )}
 
         {/* Pickup countdown when order is ready */}
         {order.status === "ready" && order.readyAt && (
