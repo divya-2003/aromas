@@ -22,6 +22,7 @@ export type Database = {
           feedback_rating: number | null
           id: string
           items: Json
+          pickup_token: string | null
           placed_at: string
           ready_at: string | null
           special_instructions: string | null
@@ -37,6 +38,7 @@ export type Database = {
           feedback_rating?: number | null
           id?: string
           items: Json
+          pickup_token?: string | null
           placed_at?: string
           ready_at?: string | null
           special_instructions?: string | null
@@ -52,6 +54,7 @@ export type Database = {
           feedback_rating?: number | null
           id?: string
           items?: Json
+          pickup_token?: string | null
           placed_at?: string
           ready_at?: string | null
           special_instructions?: string | null

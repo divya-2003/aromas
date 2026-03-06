@@ -1,0 +1,1 @@
+ALTER TABLE public.orders ADD COLUMN pickup_token TEXT UNIQUE;
