@@ -279,7 +279,6 @@ export default function RestaurantAdminPage() {
                         </span>
                       </div>
                       <div className="p-4">
-                        <p className="text-xs text-muted-foreground mb-2">#{order.id.slice(0, 8)}</p>
                         <ul className="space-y-1">
                           {items.map((item, i) => (
                             <li key={i} className="flex justify-between text-sm">
@@ -288,6 +287,7 @@ export default function RestaurantAdminPage() {
                             </li>
                           ))}
                         </ul>
+                        <p className="text-xs text-muted-foreground mt-2">#{order.id.slice(0, 8)}</p>
                         {order.special_instructions && (
                           <p className="mt-2 text-xs italic text-muted-foreground border-t border-border pt-2">
                             📝 {order.special_instructions}
@@ -314,10 +314,10 @@ export default function RestaurantAdminPage() {
               {completedOrders.map(order => {
                 const items = (Array.isArray(order.items) ? order.items : []) as OrderItem[];
                 return (
-                  <div key={order.id} className="rounded-xl border border-border bg-muted/30 p-4 opacity-60">
-                    <p className="text-xs text-muted-foreground">#{order.id.slice(0, 8)}</p>
-                    <p className="text-sm mt-1">{items.map(i => `${i.quantity}x ${i.name}`).join(', ')}</p>
-                    <p className="text-sm font-medium mt-1">₹{order.total_amount}</p>
+                   <div key={order.id} className="rounded-xl border border-border bg-muted/30 p-4 opacity-60">
+                     <p className="text-sm">{items.map(i => `${i.quantity}x ${i.name}`).join(', ')}</p>
+                     <p className="text-xs text-muted-foreground mt-1">#{order.id.slice(0, 8)}</p>
+                     <p className="text-sm font-medium mt-1">₹{order.total_amount}</p>
                   </div>
                 );
               })}
