@@ -24,6 +24,7 @@ export function QrScanner({ open, onClose, onScan }: QrScannerProps) {
     if (!open) return;
 
     let mounted = true;
+    let isRunning = false;
 
     const startScanner = async () => {
       try {
@@ -37,6 +38,7 @@ export function QrScanner({ open, onClose, onScan }: QrScannerProps) {
             try {
               const data = JSON.parse(decodedText);
               if (data.orderId && data.token) {
+                isRunning = false;
                 scanner.stop().catch(() => {});
                 if (mounted) onScan(data);
               }
@@ -46,6 +48,7 @@ export function QrScanner({ open, onClose, onScan }: QrScannerProps) {
           },
           () => {} // ignore scan failures
         );
+        isRunning = true;
       } catch (err) {
         if (mounted) setError("Unable to access camera. Please grant camera permission.");
       }
@@ -57,10 +60,11 @@ export function QrScanner({ open, onClose, onScan }: QrScannerProps) {
     return () => {
       mounted = false;
       clearTimeout(timeout);
-      if (scannerRef.current) {
+      if (scannerRef.current && isRunning) {
+        isRunning = false;
         scannerRef.current.stop().catch(() => {});
-        scannerRef.current = null;
       }
+      scannerRef.current = null;
     };
   }, [open, onScan]);
 
