@@ -147,17 +147,6 @@ const MenuPage = () => {
         </div>
       </header>
 
-      {/* Active Orders Section */}
-      {activeOrders.length > 0 && (
-        <section className="container py-4">
-          <h2 className="mb-3 text-lg font-semibold">Active Orders</h2>
-          <div className="space-y-3">
-            {activeOrders.map((order) => (
-              <OrderCard key={order.id} order={order} />
-            ))}
-          </div>
-        </section>
-      )}
 
       {/* Menu Grid */}
       <main className="container py-6">
