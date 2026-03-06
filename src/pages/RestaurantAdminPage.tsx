@@ -437,6 +437,13 @@ export default function RestaurantAdminPage() {
           );
         })()}
       </Dialog>
+
+      {/* QR Scanner */}
+      <QrScanner
+        open={showScanner}
+        onClose={() => setShowScanner(false)}
+        onScan={handleQrScan}
+      />
     </div>
   );
 }
