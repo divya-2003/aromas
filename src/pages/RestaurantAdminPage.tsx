@@ -140,14 +140,23 @@ export default function RestaurantAdminPage() {
   };
 
   const updateStatus = async (orderId: string, newStatus: string) => {
+    // Prevent duplicate transitions
+    const currentOrder = orders.find(o => o.id === orderId);
+    if (currentOrder?.status === newStatus) {
+      toast({ title: "Already updated", description: `Order is already ${newStatus}` });
+      setSelectedOrder(null);
+      return;
+    }
+
     setIsUpdating(true);
-    const { error } = await supabase.functions.invoke('update-order-status', {
+    const { data, error } = await supabase.functions.invoke('update-order-status', {
       body: { orderId, newStatus },
     });
 
-    if (error) {
-      console.error('Status update error:', error);
-      toast({ title: "Failed to update status", description: "Please try again.", variant: "destructive" });
+    if (error || (data && data.error)) {
+      const msg = data?.error || 'Please try again.';
+      console.error('Status update error:', msg);
+      toast({ title: "Failed to update status", description: msg, variant: "destructive" });
     } else {
       toast({ title: `Order marked as ${newStatus === 'preparing' ? 'Preparing' : newStatus === 'ready' ? 'Ready' : 'Picked Up'}` });
     }
