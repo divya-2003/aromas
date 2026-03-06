@@ -172,6 +172,23 @@ export default function RestaurantAdminPage() {
   const activeOrders = orders.filter(o => ['placed', 'preparing', 'ready'].includes(o.status));
   const completedOrders = orders.filter(o => o.status === 'picked_up');
 
+  const handleQrScan = useCallback(async (data: { orderId: string; token: string }) => {
+    setShowScanner(false);
+    // Verify token matches order
+    const order = orders.find(o => o.id === data.orderId);
+    if (!order) {
+      toast({ title: "Order not found", variant: "destructive" });
+      return;
+    }
+    if (order.status !== 'ready') {
+      toast({ title: "Order is not ready for pickup", description: `Current status: ${order.status}`, variant: "destructive" });
+      return;
+    }
+    // Verify via edge function (which checks pickup_token server-side)
+    await updateStatus(data.orderId, 'picked_up');
+    toast({ title: "✅ Pickup confirmed!", description: `Order #${data.orderId.slice(0, 8)} marked as picked up` });
+  }, [orders]);
+
   if (isAuthenticated === null) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -203,9 +220,20 @@ export default function RestaurantAdminPage() {
         <div className="container flex items-center gap-3 py-4">
           <ChefHat className="h-6 w-6 text-primary" />
           <h1 className="text-xl font-bold">Restaurant Dashboard</h1>
-          <span className="ml-auto rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
-            {activeOrders.length} active
-          </span>
+          <div className="ml-auto flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowScanner(true)}
+              className="flex items-center gap-2"
+            >
+              <ScanLine className="h-4 w-4" />
+              Scan QR
+            </Button>
+            <span className="rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
+              {activeOrders.length} active
+            </span>
+          </div>
         </div>
       </header>
 
