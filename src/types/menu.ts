@@ -26,6 +26,7 @@ export interface Order {
   specialInstructions?: string;
   feedbackRating?: number;
   feedbackComment?: string;
+  pickupToken?: string;
 }
 
 export type OrderStatus = 
