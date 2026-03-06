@@ -78,6 +78,9 @@ Deno.serve(async (req) => {
     const updateData: Record<string, unknown> = { status: newStatus };
     if (newStatus === 'ready') {
       updateData.ready_at = new Date().toISOString();
+      // Generate unique pickup token
+      const pickupToken = crypto.randomUUID().replace(/-/g, '').slice(0, 12).toUpperCase();
+      updateData.pickup_token = pickupToken;
     }
 
     const { error: updateError } = await supabaseAdmin

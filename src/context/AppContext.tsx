@@ -100,6 +100,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           specialInstructions: order.special_instructions,
           feedbackRating: order.feedback_rating,
           feedbackComment: order.feedback_comment,
+          pickupToken: order.pickup_token,
         }));
         setOrders(mappedOrders);
       }
@@ -131,6 +132,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
               specialInstructions: newOrder.special_instructions,
               feedbackRating: newOrder.feedback_rating,
               feedbackComment: newOrder.feedback_comment,
+              pickupToken: newOrder.pickup_token,
             };
             setOrders(prev => [mappedOrder, ...prev.filter(o => o.id !== mappedOrder.id)]);
           } else if (payload.eventType === 'UPDATE') {
@@ -144,6 +146,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
                     readyAt: updatedOrder.ready_at ? new Date(updatedOrder.ready_at) : undefined,
                     feedbackRating: updatedOrder.feedback_rating,
                     feedbackComment: updatedOrder.feedback_comment,
+                    pickupToken: updatedOrder.pickup_token,
                   }
                 : order
             ));
