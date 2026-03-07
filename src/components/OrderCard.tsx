@@ -268,9 +268,9 @@ export function OrderCard({ order }: OrderCardProps) {
       <div className="p-4">
         <div className="flex items-start justify-between">
           <div>
-            <h3 className="font-semibold">{order.id}</h3>
-            <p className="mt-1 text-sm text-muted-foreground line-clamp-1">{itemNames}</p>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="font-semibold line-clamp-2">{itemNames}</p>
+            <p className="mt-1 text-xs text-muted-foreground font-mono">#{order.id.slice(0, 8)}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
               {order.placedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
             </p>
           </div>
