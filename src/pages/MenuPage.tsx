@@ -105,9 +105,8 @@ const MenuPage = () => {
             />
           </div>
 
-          {/* Veg/Non-Veg Filter - Only show for All section */}
-          {activeCategory === "all" && (
-            <motion.div
+          {/* Veg/Non-Veg Filter */}
+          <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               className="mt-4 flex gap-2"
@@ -143,7 +142,6 @@ const MenuPage = () => {
                 Non-Veg
               </Button>
             </motion.div>
-          )}
         </div>
       </header>
 
