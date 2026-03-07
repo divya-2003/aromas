@@ -142,8 +142,7 @@ const MenuPage = () => {
                 Non-Veg
               </Button>
             </motion.div>
-          )}
-        </div>
+          </motion.div>
       </header>
 
 
