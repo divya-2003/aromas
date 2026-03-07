@@ -37,6 +37,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [specialInstructions, setSpecialInstructions] = useState("");
   const [isParcel, setIsParcel] = useState(false);
 
+  // Request notification permission
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  const sendCustomerNotification = (title: string, body: string) => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, { body, icon: '/favicon.ico' });
+    }
+  };
+
   // Listen to Supabase auth state changes
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -151,12 +164,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 : order
             ));
             
-            // Show toast when order is ready
-            if (updatedOrder.status === 'ready') {
+            // Show toast and browser notification for status changes
+            if (updatedOrder.status === 'preparing') {
+              toast({
+                title: "👨‍🍳 Your order is being prepared!",
+                description: `Order #${updatedOrder.id.slice(0, 8)} is now being prepared`,
+              });
+              sendCustomerNotification(
+                '👨‍🍳 Order Being Prepared!',
+                `Your order #${updatedOrder.id.slice(0, 8)} is now being prepared.`
+              );
+            } else if (updatedOrder.status === 'ready') {
               toast({
                 title: "🎉 Your order is ready!",
                 description: `Order is ready for pickup`,
               });
+              sendCustomerNotification(
+                '🎉 Order Ready for Pickup!',
+                `Your order #${updatedOrder.id.slice(0, 8)} is ready! Come pick it up.`
+              );
             }
           }
         }
