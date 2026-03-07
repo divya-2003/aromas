@@ -23,7 +23,6 @@ const MenuPage = () => {
   const activeOrders = orders.filter(order => order.status !== "picked_up");
 
   const filteredItems = menuItems.filter((item) => {
-    const matchesCategory = activeCategory === "all" || item.category === activeCategory;
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesVegFilter = 
       vegFilter === "all" || 
