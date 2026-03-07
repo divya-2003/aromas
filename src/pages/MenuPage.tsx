@@ -13,7 +13,6 @@ import { useApp } from "@/context/AppContext";
 import { LocationBadge } from "@/components/LocationGate";
 
 const MenuPage = () => {
-  const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -24,13 +23,12 @@ const MenuPage = () => {
   const activeOrders = orders.filter(order => order.status !== "picked_up");
 
   const filteredItems = menuItems.filter((item) => {
-    const matchesCategory = activeCategory === "all" || item.category === activeCategory;
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesVegFilter = 
       vegFilter === "all" || 
       (vegFilter === "veg" && item.isVeg) || 
       (vegFilter === "nonveg" && !item.isVeg);
-    return matchesCategory && matchesSearch && matchesVegFilter;
+    return matchesSearch && matchesVegFilter;
   });
 
   return (
@@ -96,14 +94,8 @@ const MenuPage = () => {
             )}
           </AnimatePresence>
 
-          {/* Category Tabs */}
-          <div className="mt-4">
-            <CategoryTabs
-              categories={menuCategories}
-              activeCategory={activeCategory}
-              onCategoryChange={setActiveCategory}
-            />
-          </div>
+
+
 
           {/* Veg/Non-Veg Filter */}
           <motion.div
