@@ -37,6 +37,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [specialInstructions, setSpecialInstructions] = useState("");
   const [isParcel, setIsParcel] = useState(false);
 
+  // Request notification permission
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  const sendCustomerNotification = (title: string, body: string) => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, { body, icon: '/favicon.ico' });
+    }
+  };
+
   // Listen to Supabase auth state changes
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
