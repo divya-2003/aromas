@@ -9,6 +9,7 @@ import AuthPage from "./pages/AuthPage";
 import OrdersPage from "./pages/OrdersPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import RestaurantAdminPage from "./pages/RestaurantAdminPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<MenuPage />} />
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/admin" element={<RestaurantAdminPage />} />
