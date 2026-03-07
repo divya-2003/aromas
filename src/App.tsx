@@ -9,6 +9,7 @@ import AuthPage from "./pages/AuthPage";
 import OrdersPage from "./pages/OrdersPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import RestaurantAdminPage from "./pages/RestaurantAdminPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();

@@ -28,7 +28,7 @@ const AuthPage = () => {
     try {
       if (mode === "forgot-password") {
         const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
-          redirectTo: `${window.location.origin}/auth?mode=reset`,
+          redirectTo: `${window.location.origin}/reset-password`,
         });
 
         if (error) throw error;
