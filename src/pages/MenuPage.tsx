@@ -13,7 +13,6 @@ import { useApp } from "@/context/AppContext";
 import { LocationBadge } from "@/components/LocationGate";
 
 const MenuPage = () => {
-  const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
