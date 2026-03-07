@@ -94,14 +94,8 @@ const MenuPage = () => {
             )}
           </AnimatePresence>
 
-          {/* Category Tabs */}
-          <div className="mt-4">
-            <CategoryTabs
-              categories={menuCategories}
-              activeCategory={activeCategory}
-              onCategoryChange={setActiveCategory}
-            />
-          </div>
+
+
 
           {/* Veg/Non-Veg Filter */}
           <motion.div
