@@ -28,7 +28,7 @@ const MenuPage = () => {
       vegFilter === "all" || 
       (vegFilter === "veg" && item.isVeg) || 
       (vegFilter === "nonveg" && !item.isVeg);
-    return matchesCategory && matchesSearch && matchesVegFilter;
+    return matchesSearch && matchesVegFilter;
   });
 
   return (
