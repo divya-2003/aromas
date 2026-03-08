@@ -41,6 +41,7 @@ const MENU_ITEMS: Record<string, { name: string; price: number }> = {
   "25": { name: "Cheese Maggi", price: 70 },
   "27": { name: "Veg Schezwan Noodles", price: 80 },
   "28": { name: "Chicken Noodles", price: 100 },
+  "29": { name: "Veg Noodles", price: 70 },
 }
 
 interface OrderItem {

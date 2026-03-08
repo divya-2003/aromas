@@ -24,6 +24,7 @@ import vegMaggi from "@/assets/veg-maggi.jpg";
 import cheeseMaggi from "@/assets/cheese-maggi.jpg";
 import vegSchezwanNoodles from "@/assets/veg-schezwan-noodles.jpg";
 import chickenNoodles from "@/assets/chicken-noodles.jpg";
+import vegNoodles from "@/assets/veg-noodles.jpg";
 
 export const menuCategories = [
   { id: "all", name: "All", icon: "🍽️" },
@@ -261,5 +262,14 @@ export const menuItems: MenuItem[] = [
     category: "main",
     image: chickenNoodles,
     isVeg: false,
+  },
+  {
+    id: "29",
+    name: "Veg Noodles",
+    description: "Classic stir-fried hakka noodles with fresh vegetables and soy sauce",
+    price: 70,
+    category: "main",
+    image: vegNoodles,
+    isVeg: true,
   },
 ];
