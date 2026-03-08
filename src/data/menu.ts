@@ -22,6 +22,8 @@ import manchowSoup from "@/assets/manchow-soup.jpg";
 import plainMaggi from "@/assets/plain-maggi.jpg";
 import vegMaggi from "@/assets/veg-maggi.jpg";
 import cheeseMaggi from "@/assets/cheese-maggi.jpg";
+import vegSchezwanNoodles from "@/assets/veg-schezwan-noodles.jpg";
+import chickenNoodles from "@/assets/chicken-noodles.jpg";
 
 export const menuCategories = [
   { id: "all", name: "All", icon: "🍽️" },
@@ -241,5 +243,23 @@ export const menuItems: MenuItem[] = [
     category: "maggi",
     image: cheeseMaggi,
     isVeg: true,
+  },
+  {
+    id: "27",
+    name: "Veg Schezwan Noodles",
+    description: "Spicy Indo-Chinese noodles tossed with fresh vegetables and schezwan sauce",
+    price: 80,
+    category: "main",
+    image: vegSchezwanNoodles,
+    isVeg: true,
+  },
+  {
+    id: "28",
+    name: "Chicken Noodles",
+    description: "Stir-fried noodles with tender chicken pieces and vegetables",
+    price: 100,
+    category: "main",
+    image: chickenNoodles,
+    isVeg: false,
   },
 ];
