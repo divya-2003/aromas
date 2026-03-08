@@ -94,6 +94,19 @@ const ResetPasswordPage = () => {
     setIsLoading(false);
   };
 
+  if (isCheckingSession) {
+    return (
+      <div className="min-h-screen gradient-hero flex items-center justify-center px-4">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md text-center">
+          <div className="rounded-2xl bg-card p-6 shadow-card">
+            <h2 className="text-xl font-semibold text-foreground mb-2">Validating reset link...</h2>
+            <p className="text-muted-foreground">Please wait a moment.</p>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   if (!isValidSession) {
     return (
       <div className="min-h-screen gradient-hero flex items-center justify-center px-4">
