@@ -11,25 +11,53 @@ const ResetPasswordPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isValidSession, setIsValidSession] = useState(false);
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user arrived via recovery link
-    const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    const type = hashParams.get("type");
-    
-    if (type === "recovery") {
-      setIsValidSession(true);
-    }
+    let isMounted = true;
 
-    // Also listen for auth state to detect recovery session
+    const validateRecoverySession = async () => {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const searchParams = new URLSearchParams(window.location.search);
+
+      const hasRecoveryType =
+        hashParams.get("type") === "recovery" || searchParams.get("type") === "recovery";
+
+      let hasValidSession = hasRecoveryType;
+
+      const code = searchParams.get("code");
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (!error) {
+          hasValidSession = true;
+        }
+      }
+
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        hasValidSession = true;
+      }
+
+      if (isMounted) {
+        setIsValidSession(hasValidSession);
+        setIsCheckingSession(false);
+      }
+    };
+
+    validateRecoverySession();
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") {
+      if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
         setIsValidSession(true);
+        setIsCheckingSession(false);
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
