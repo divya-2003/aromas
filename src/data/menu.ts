@@ -263,4 +263,13 @@ export const menuItems: MenuItem[] = [
     image: chickenNoodles,
     isVeg: false,
   },
+  {
+    id: "29",
+    name: "Veg Noodles",
+    description: "Classic stir-fried hakka noodles with fresh vegetables and soy sauce",
+    price: 70,
+    category: "main",
+    image: vegNoodles,
+    isVeg: true,
+  },
 ];
