@@ -244,4 +244,22 @@ export const menuItems: MenuItem[] = [
     image: cheeseMaggi,
     isVeg: true,
   },
+  {
+    id: "27",
+    name: "Veg Schezwan Noodles",
+    description: "Spicy Indo-Chinese noodles tossed with fresh vegetables and schezwan sauce",
+    price: 80,
+    category: "main",
+    image: vegSchezwanNoodles,
+    isVeg: true,
+  },
+  {
+    id: "28",
+    name: "Chicken Noodles",
+    description: "Stir-fried noodles with tender chicken pieces and vegetables",
+    price: 100,
+    category: "main",
+    image: chickenNoodles,
+    isVeg: false,
+  },
 ];
