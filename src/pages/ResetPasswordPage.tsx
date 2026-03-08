@@ -11,25 +11,53 @@ const ResetPasswordPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isValidSession, setIsValidSession] = useState(false);
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user arrived via recovery link
-    const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    const type = hashParams.get("type");
-    
-    if (type === "recovery") {
-      setIsValidSession(true);
-    }
+    let isMounted = true;
 
-    // Also listen for auth state to detect recovery session
+    const validateRecoverySession = async () => {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const searchParams = new URLSearchParams(window.location.search);
+
+      const hasRecoveryType =
+        hashParams.get("type") === "recovery" || searchParams.get("type") === "recovery";
+
+      let hasValidSession = hasRecoveryType;
+
+      const code = searchParams.get("code");
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (!error) {
+          hasValidSession = true;
+        }
+      }
+
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        hasValidSession = true;
+      }
+
+      if (isMounted) {
+        setIsValidSession(hasValidSession);
+        setIsCheckingSession(false);
+      }
+    };
+
+    validateRecoverySession();
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") {
+      if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
         setIsValidSession(true);
+        setIsCheckingSession(false);
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -65,6 +93,19 @@ const ResetPasswordPage = () => {
 
     setIsLoading(false);
   };
+
+  if (isCheckingSession) {
+    return (
+      <div className="min-h-screen gradient-hero flex items-center justify-center px-4">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md text-center">
+          <div className="rounded-2xl bg-card p-6 shadow-card">
+            <h2 className="text-xl font-semibold text-foreground mb-2">Validating reset link...</h2>
+            <p className="text-muted-foreground">Please wait a moment.</p>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
 
   if (!isValidSession) {
     return (
