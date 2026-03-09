@@ -10,6 +10,7 @@ import OrdersPage from "./pages/OrdersPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import RestaurantAdminPage from "./pages/RestaurantAdminPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import BillPage from "./pages/BillPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/bill" element={<BillPage />} />
             <Route path="/admin" element={<RestaurantAdminPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
