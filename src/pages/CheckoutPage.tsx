@@ -59,7 +59,7 @@ const CheckoutPage = () => {
         title: "🎉 Order placed successfully!",
         description: `Your order is being prepared`,
       });
-      navigate("/orders");
+      navigate("/bill", { state: { order } });
     }
   };
 
