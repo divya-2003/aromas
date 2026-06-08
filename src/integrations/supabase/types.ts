@@ -16,12 +16,16 @@ export type Database = {
     Tables: {
       orders: {
         Row: {
+          cashfree_order_id: string | null
           created_at: string
           estimated_ready_time: string | null
           feedback_comment: string | null
           feedback_rating: number | null
           id: string
           items: Json
+          payment_id: string | null
+          payment_session_id: string | null
+          payment_status: string
           pickup_token: string | null
           placed_at: string
           ready_at: string | null
@@ -32,12 +36,16 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          cashfree_order_id?: string | null
           created_at?: string
           estimated_ready_time?: string | null
           feedback_comment?: string | null
           feedback_rating?: number | null
           id?: string
           items: Json
+          payment_id?: string | null
+          payment_session_id?: string | null
+          payment_status?: string
           pickup_token?: string | null
           placed_at?: string
           ready_at?: string | null
@@ -48,12 +56,16 @@ export type Database = {
           user_id: string
         }
         Update: {
+          cashfree_order_id?: string | null
           created_at?: string
           estimated_ready_time?: string | null
           feedback_comment?: string | null
           feedback_rating?: number | null
           id?: string
           items?: Json
+          payment_id?: string | null
+          payment_session_id?: string | null
+          payment_status?: string
           pickup_token?: string | null
           placed_at?: string
           ready_at?: string | null

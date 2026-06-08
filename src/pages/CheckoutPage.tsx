@@ -1,65 +1,85 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, CreditCard, Smartphone } from "lucide-react";
+import { ArrowLeft, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import { toast } from "@/hooks/use-toast";
 import { useLocation as useGeoLocation } from "@/hooks/useLocation";
-
-const paymentMethods = [
-  { id: "upi", name: "UPI", icon: Smartphone, description: "Google Pay, PhonePe, Paytm" },
-  { id: "card", name: "Card", icon: CreditCard, description: "Credit/Debit Card" },
-];
+import { load } from "@cashfreepayments/cashfree-js";
+import { supabase } from "@/integrations/supabase/client";
 
 const CheckoutPage = () => {
-  const [selectedPayment, setSelectedPayment] = useState("upi");
   const [isProcessing, setIsProcessing] = useState(false);
-  const { cart, cartTotal, placeOrder, isAuthenticated, isParcel, parcelCharge, grandTotal } = useApp();
+  const { cart, cartTotal, clearCart, isAuthenticated, isParcel, parcelCharge, grandTotal } = useApp();
   const navigate = useNavigate();
   const { isWithinPremises, isLoading: isLocationLoading, coordinates } = useGeoLocation();
 
-  const upiUrl = `upi://pay?pa=sukhsagar@upi&pn=Sukh%20Sagar&am=${grandTotal}&cu=INR&tn=Order%20Payment`;
-
   const handlePlaceOrder = async () => {
     if (!isAuthenticated) {
-      toast({
-        title: "Please sign in",
-        description: "You need to sign in to place an order",
-        variant: "destructive",
-      });
+      toast({ title: "Please sign in", description: "You need to sign in to place an order", variant: "destructive" });
       navigate("/auth");
       return;
     }
-
-    if (!isWithinPremises) {
-      toast({
-        title: "Location required",
-        description: "You must be within the college premises to place an order",
-        variant: "destructive",
-      });
+    if (!isWithinPremises || !coordinates) {
+      toast({ title: "Location required", description: "You must be within campus to order", variant: "destructive" });
       return;
     }
 
-    if (selectedPayment === "upi") {
-      // Open UPI app for payment
-      window.location.href = upiUrl;
-    }
-
     setIsProcessing(true);
-    
-    // Simulate payment processing
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    
-    const order = await placeOrder(coordinates || undefined);
-    setIsProcessing(false);
-
-    if (order) {
-      toast({
-        title: "🎉 Order placed successfully!",
-        description: `Your order is being prepared`,
+    try {
+      const { data, error } = await supabase.functions.invoke("create-payment-session", {
+        body: {
+          items: cart.map((c) => ({ id: c.id, quantity: c.quantity })),
+          latitude: coordinates.latitude,
+          longitude: coordinates.longitude,
+          isParcel,
+        },
       });
-      navigate("/bill", { state: { order } });
+
+      if (error || !data?.paymentSessionId) {
+        throw new Error(data?.error || error?.message || "Failed to start payment");
+      }
+
+      const cashfree = await load({ mode: data.mode === "production" ? "production" : "sandbox" });
+      const result = await cashfree.checkout({
+        paymentSessionId: data.paymentSessionId,
+        redirectTarget: "_modal",
+      });
+
+      if (result?.error) {
+        toast({ title: "Payment cancelled", description: result.error.message || "Please try again", variant: "destructive" });
+        setIsProcessing(false);
+        return;
+      }
+
+      // Poll for payment status (webhook will update it shortly)
+      let paid = false;
+      for (let i = 0; i < 8; i++) {
+        const { data: row } = await supabase
+          .from("orders")
+          .select("payment_status")
+          .eq("id", data.orderId)
+          .maybeSingle();
+        if (row?.payment_status === "paid") { paid = true; break; }
+        if (row?.payment_status === "failed") break;
+        await new Promise((r) => setTimeout(r, 1500));
+      }
+
+      if (!paid) {
+        toast({ title: "Payment pending", description: "We'll confirm once the gateway notifies us.", variant: "destructive" });
+        setIsProcessing(false);
+        return;
+      }
+
+      clearCart();
+      toast({ title: "🎉 Payment received!", description: "Your order is being prepared" });
+      navigate("/bill", { state: { order: data.order } });
+    } catch (e: any) {
+      console.error(e);
+      toast({ title: "Payment failed", description: e?.message || "Please try again", variant: "destructive" });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -76,9 +96,7 @@ const CheckoutPage = () => {
         </header>
         <div className="container flex flex-col items-center justify-center py-12 text-center">
           <p className="text-lg font-semibold">Your cart is empty</p>
-          <Button className="mt-4" onClick={() => navigate("/")}>
-            Browse Menu
-          </Button>
+          <Button className="mt-4" onClick={() => navigate("/")}>Browse Menu</Button>
         </div>
       </div>
     );
@@ -86,7 +104,6 @@ const CheckoutPage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-32">
-      {/* Header */}
       <header className="sticky top-0 z-20 border-b border-border bg-background">
         <div className="container flex items-center gap-4 py-4">
           <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
@@ -97,22 +114,13 @@ const CheckoutPage = () => {
       </header>
 
       <main className="container py-6">
-        {/* Order Summary */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl bg-card p-4 shadow-card"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl bg-card p-4 shadow-card">
           <h2 className="font-semibold">Order Summary</h2>
           <div className="mt-4 space-y-3">
             {cart.map((item) => (
               <div key={item.id} className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="h-12 w-12 rounded-lg object-cover"
-                  />
+                  <img src={item.image} alt={item.name} className="h-12 w-12 rounded-lg object-cover" />
                   <div>
                     <p className="text-sm font-medium">{item.name}</p>
                     <p className="text-xs text-muted-foreground">x{item.quantity}</p>
@@ -140,79 +148,29 @@ const CheckoutPage = () => {
           </div>
         </motion.div>
 
-        {/* Payment Methods */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mt-6"
-        >
-          <h2 className="font-semibold">Payment Method</h2>
-          <div className="mt-4 space-y-3">
-        {paymentMethods.map((method) => (
-              <button
-                key={method.id}
-                onClick={() => setSelectedPayment(method.id)}
-                className={`flex w-full items-center gap-4 rounded-xl border-2 p-4 transition-all ${
-                  selectedPayment === method.id
-                    ? "border-primary bg-accent"
-                    : "border-border bg-card hover:border-muted-foreground"
-                }`}
-              >
-                <div
-                  className={`rounded-full p-2 ${
-                    selectedPayment === method.id ? "bg-primary text-primary-foreground" : "bg-muted"
-                  }`}
-                >
-                  <method.icon className="h-5 w-5" />
-                </div>
-                <div className="text-left">
-                  <p className="font-medium">{method.name}</p>
-                  <p className="text-xs text-muted-foreground">{method.description}</p>
-                </div>
-                <div className="ml-auto">
-                  <div
-                    className={`h-5 w-5 rounded-full border-2 ${
-                      selectedPayment === method.id
-                        ? "border-primary bg-primary"
-                        : "border-muted-foreground"
-                    }`}
-                  >
-                    {selectedPayment === method.id && (
-                      <div className="flex h-full items-center justify-center">
-                        <div className="h-2 w-2 rounded-full bg-primary-foreground" />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </button>
-            ))}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mt-6">
+          <div className="rounded-2xl bg-card p-4 shadow-card flex items-center gap-3">
+            <div className="rounded-full p-2 bg-primary text-primary-foreground">
+              <CreditCard className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="font-medium">Secure Payment by Cashfree</p>
+              <p className="text-xs text-muted-foreground">UPI, Cards, Net Banking & more</p>
+            </div>
           </div>
-
         </motion.div>
-
       </main>
 
-      {/* Fixed Bottom Bar */}
       <div className="fixed bottom-0 left-0 right-0 border-t border-border bg-background p-4">
-        <Button
-          className="w-full"
-          size="lg"
-          onClick={handlePlaceOrder}
-          disabled={isProcessing || isLocationLoading || !isWithinPremises}
-        >
+        <Button className="w-full" size="lg" onClick={handlePlaceOrder} disabled={isProcessing || isLocationLoading || !isWithinPremises}>
           {isProcessing ? (
             <span className="flex items-center gap-2">
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
               Processing...
             </span>
-          ) : isLocationLoading ? (
-            "Verifying location..."
-          ) : !isWithinPremises ? (
-            "Outside campus - Cannot order"
-          ) : (
-            `Pay ₹${grandTotal}`
-          )}
+          ) : isLocationLoading ? "Verifying location..."
+            : !isWithinPremises ? "Outside campus - Cannot order"
+            : `Pay ₹${grandTotal}`}
         </Button>
       </div>
     </div>
