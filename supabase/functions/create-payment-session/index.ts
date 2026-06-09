@@ -129,10 +129,17 @@ Deno.serve(async (req) => {
     }
 
     // Create Cashfree order
-    const appId = Deno.env.get('CASHFREE_APP_ID')!
-    const secretKey = Deno.env.get('CASHFREE_SECRET_KEY')!
-    const isProd = !appId.toLowerCase().includes('test')
+    const appId = (Deno.env.get('CASHFREE_APP_ID') || '').trim()
+    const secretKey = (Deno.env.get('CASHFREE_SECRET_KEY') || '').trim()
+    const mode = (Deno.env.get('CASHFREE_MODE') || 'sandbox').trim().toLowerCase()
+    const isProd = mode === 'production' || mode === 'live' || mode === 'prod'
     const cfBase = isProd ? 'https://api.cashfree.com/pg' : 'https://sandbox.cashfree.com/pg'
+
+    if (!appId || !secretKey) {
+      console.error('Missing Cashfree credentials')
+      return new Response(JSON.stringify({ error: 'Payment not configured' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+    console.log(`[cashfree] mode=${isProd ? 'production' : 'sandbox'} appId_prefix=${appId.substring(0, 6)} appId_len=${appId.length} secret_len=${secretKey.length}`)
 
     const cfRes = await fetch(`${cfBase}/orders`, {
       method: 'POST',
