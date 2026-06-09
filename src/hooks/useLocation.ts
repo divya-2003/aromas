@@ -8,7 +8,7 @@ const COLLEGE_LOCATION = {
 };
 
 // Allowed radius in meters (2km for full campus coverage)
-const ALLOWED_RADIUS_METERS = 2000;
+const ALLOWED_RADIUS_METERS = 3000;
 
 interface LocationState {
   isWithinPremises: boolean;
