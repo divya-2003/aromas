@@ -28,14 +28,48 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+const CART_STORAGE_KEY = "aromas.cart.v1";
+const INSTRUCTIONS_STORAGE_KEY = "aromas.cart.instructions.v1";
+const PARCEL_STORAGE_KEY = "aromas.cart.parcel.v1";
+
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    try {
+      const raw = typeof window !== "undefined" ? localStorage.getItem(CART_STORAGE_KEY) : null;
+      return raw ? (JSON.parse(raw) as CartItem[]) : [];
+    } catch {
+      return [];
+    }
+  });
   const [orders, setOrders] = useState<Order[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
-  const [specialInstructions, setSpecialInstructions] = useState("");
-  const [isParcel, setIsParcel] = useState(false);
+  const [specialInstructions, setSpecialInstructions] = useState(() => {
+    try {
+      return typeof window !== "undefined" ? localStorage.getItem(INSTRUCTIONS_STORAGE_KEY) || "" : "";
+    } catch {
+      return "";
+    }
+  });
+  const [isParcel, setIsParcel] = useState<boolean>(() => {
+    try {
+      return typeof window !== "undefined" && localStorage.getItem(PARCEL_STORAGE_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
+
+  // Persist cart state across navigations/reloads
+  useEffect(() => {
+    try { localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart)); } catch {}
+  }, [cart]);
+  useEffect(() => {
+    try { localStorage.setItem(INSTRUCTIONS_STORAGE_KEY, specialInstructions); } catch {}
+  }, [specialInstructions]);
+  useEffect(() => {
+    try { localStorage.setItem(PARCEL_STORAGE_KEY, isParcel ? "1" : "0"); } catch {}
+  }, [isParcel]);
 
   // Request notification permission
   useEffect(() => {
