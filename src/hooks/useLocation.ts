@@ -78,6 +78,8 @@ export function useLocation() {
 
         const isWithin = distance <= ALLOWED_RADIUS_METERS;
 
+        console.log("[useLocation] coords:", latitude, longitude, "distance(m):", Math.round(distance), "accuracy(m):", position.coords.accuracy, "within:", isWithin);
+
         setLocationState({
           isWithinPremises: isWithin,
           isLoading: false,
