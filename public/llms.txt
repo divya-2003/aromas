@@ -1,0 +1,9 @@
+# Aromas
+
+> Order food from your college canteen and skip the queue. Pre-order while in class and pick up when ready!
+
+Aromas is a food ordering app for college students. Browse the menu from Sukh Sagar canteen, add items to your cart, and place orders for dine-in pickup. The app verifies you're on campus using geolocation and supports secure payments.
+
+## Pages
+
+- [/](/): Browse the full food menu, search items, filter by diet type, and add items to your cart.
