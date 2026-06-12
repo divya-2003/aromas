@@ -98,6 +98,11 @@ const ResetPasswordPage = () => {
   if (isCheckingSession) {
     return (
       <div className="min-h-screen gradient-hero flex items-center justify-center px-4">
+        <Helmet>
+          <title>Reset Password | Aromas</title>
+          <meta name="description" content="Reset your Aromas account password securely." />
+          <link rel="canonical" href="https://mobiledine-in.lovable.app/reset-password" />
+        </Helmet>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md text-center">
           <div className="rounded-2xl bg-card p-6 shadow-card">
             <h2 className="text-xl font-semibold text-foreground mb-2">Validating reset link...</h2>
@@ -111,6 +116,11 @@ const ResetPasswordPage = () => {
   if (!isValidSession) {
     return (
       <div className="min-h-screen gradient-hero flex items-center justify-center px-4">
+        <Helmet>
+          <title>Reset Password | Aromas</title>
+          <meta name="description" content="Reset your Aromas account password securely." />
+          <link rel="canonical" href="https://mobiledine-in.lovable.app/reset-password" />
+        </Helmet>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md text-center">
           <div className="rounded-2xl bg-card p-6 shadow-card">
             <h2 className="text-xl font-semibold text-foreground mb-2">Invalid or Expired Link</h2>
@@ -126,6 +136,11 @@ const ResetPasswordPage = () => {
 
   return (
     <div className="min-h-screen gradient-hero">
+      <Helmet>
+        <title>Reset Password | Aromas</title>
+        <meta name="description" content="Reset your Aromas account password securely." />
+        <link rel="canonical" href="https://mobiledine-in.lovable.app/reset-password" />
+      </Helmet>
       <div className="container py-4">
         <Button variant="ghost" size="icon" onClick={() => navigate("/auth")}>
           <ArrowLeft className="h-5 w-5" />
