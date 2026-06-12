@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { ArrowLeft, User, Mail, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -162,8 +163,20 @@ const AuthPage = () => {
     }
   };
 
+  const pageTitle = mode === "login" ? "Sign In | Aromas" : mode === "signup" ? "Join Aromas" : "Reset Password | Aromas";
+
   return (
-    <div className="min-h-screen gradient-hero">
+    <>
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content="Sign in or create an Aromas account to order food from Sukh Sagar canteen." />
+        <link rel="canonical" href="https://mobiledine-in.lovable.app/auth" />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content="Sign in or create an Aromas account to order food from Sukh Sagar canteen." />
+        <meta property="og:url" content="https://mobiledine-in.lovable.app/auth" />
+        <meta property="og:type" content="website" />
+      </Helmet>
+      <div className="min-h-screen gradient-hero">
       <div className="container py-4">
         <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
           <ArrowLeft className="h-5 w-5" />
@@ -295,6 +308,7 @@ const AuthPage = () => {
         </motion.div>
       </div>
     </div>
+    </>
   );
 };
 

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { ArrowLeft, Receipt, CheckCircle, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,15 @@ const BillPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Order Bill | Aromas</title>
+        <meta name="description" content="View and print your order bill from Sukh Sagar college canteen." />
+        <link rel="canonical" href="https://mobiledine-in.lovable.app/bill" />
+        <meta property="og:title" content="Order Bill | Aromas" />
+        <meta property="og:description" content="View and print your order bill from Sukh Sagar college canteen." />
+        <meta property="og:url" content="https://mobiledine-in.lovable.app/bill" />
+        <meta property="og:type" content="website" />
+      </Helmet>
       {/* Header - hidden in print */}
       <header className="sticky top-0 z-20 border-b border-border bg-background print:hidden">
         <div className="container flex items-center gap-4 py-4">

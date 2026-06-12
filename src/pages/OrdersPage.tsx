@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { ArrowLeft, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,15 @@ const OrdersPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>My Orders | Aromas</title>
+        <meta name="description" content="Track your active and past food orders from Sukh Sagar canteen on Aromas." />
+        <link rel="canonical" href="https://mobiledine-in.lovable.app/orders" />
+        <meta property="og:title" content="My Orders | Aromas" />
+        <meta property="og:description" content="Track your active and past food orders from Sukh Sagar canteen on Aromas." />
+        <meta property="og:url" content="https://mobiledine-in.lovable.app/orders" />
+        <meta property="og:type" content="website" />
+      </Helmet>
       {/* Header */}
       <header className="sticky top-0 z-20 border-b border-border bg-background">
         <div className="container flex items-center gap-4 py-4">

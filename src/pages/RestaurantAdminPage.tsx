@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChefHat, CheckCircle, Clock, Package, Bell, LogIn, ScanLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -201,6 +202,11 @@ export default function RestaurantAdminPage() {
   if (isAuthenticated === null) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
+        <Helmet>
+          <title>Restaurant Dashboard | Aromas</title>
+          <meta name="description" content="Admin dashboard for managing Sukh Sagar canteen orders and tracking pickups." />
+          <link rel="canonical" href="https://mobiledine-in.lovable.app/admin" />
+        </Helmet>
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
     );
@@ -209,6 +215,11 @@ export default function RestaurantAdminPage() {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
+        <Helmet>
+          <title>Restaurant Dashboard | Aromas</title>
+          <meta name="description" content="Admin dashboard for managing Sukh Sagar canteen orders and tracking pickups." />
+          <link rel="canonical" href="https://mobiledine-in.lovable.app/admin" />
+        </Helmet>
         <div className="text-center space-y-4">
           <ChefHat className="h-12 w-12 mx-auto text-primary" />
           <h1 className="text-2xl font-bold">Restaurant Dashboard</h1>
@@ -222,8 +233,13 @@ export default function RestaurantAdminPage() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-background">
+    return (
+      <div className="min-h-screen bg-background">
+        <Helmet>
+          <title>Restaurant Dashboard | Aromas</title>
+          <meta name="description" content="Admin dashboard for managing Sukh Sagar canteen orders and tracking pickups." />
+          <link rel="canonical" href="https://mobiledine-in.lovable.app/admin" />
+        </Helmet>
       {/* Header */}
       <header className="sticky top-0 z-20 border-b border-border bg-background">
         <div className="container flex items-center gap-3 py-4">
