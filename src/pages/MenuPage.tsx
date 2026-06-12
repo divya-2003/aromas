@@ -33,7 +33,17 @@ const MenuPage = () => {
   });
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <>
+      <Helmet>
+        <title>Order Food from Sukh Sagar | Aromas</title>
+        <meta name="description" content="Browse the Sukh Sagar college canteen menu on Aromas. Pre-order food, skip the queue, and pay securely." />
+        <link rel="canonical" href="https://mobiledine-in.lovable.app/" />
+        <meta property="og:title" content="Order Food from Sukh Sagar | Aromas" />
+        <meta property="og:description" content="Browse the Sukh Sagar college canteen menu on Aromas. Pre-order food, skip the queue, and pay securely." />
+        <meta property="og:url" content="https://mobiledine-in.lovable.app/" />
+        <meta property="og:type" content="website" />
+      </Helmet>
+      <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <header className="sticky top-0 z-20 gradient-hero">
         <div className="container py-4">

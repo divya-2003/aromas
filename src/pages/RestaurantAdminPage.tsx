@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { Helmet } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChefHat, CheckCircle, Clock, Package, Bell, LogIn, ScanLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
