@@ -87,6 +87,15 @@ const CheckoutPage = () => {
   if (cart.length === 0) {
     return (
       <div className="min-h-screen bg-background">
+        <Helmet>
+          <title>Checkout | Aromas</title>
+          <meta name="description" content="Review your cart and complete secure payment for your Sukh Sagar canteen order." />
+          <link rel="canonical" href="https://mobiledine-in.lovable.app/checkout" />
+          <meta property="og:title" content="Checkout | Aromas" />
+          <meta property="og:description" content="Review your cart and complete secure payment for your Sukh Sagar canteen order." />
+          <meta property="og:url" content="https://mobiledine-in.lovable.app/checkout" />
+          <meta property="og:type" content="website" />
+        </Helmet>
         <header className="sticky top-0 z-20 border-b border-border bg-background">
           <div className="container flex items-center gap-4 py-4">
             <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
@@ -105,6 +114,15 @@ const CheckoutPage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-32">
+      <Helmet>
+        <title>Checkout | Aromas</title>
+        <meta name="description" content="Review your cart and complete secure payment for your Sukh Sagar canteen order." />
+        <link rel="canonical" href="https://mobiledine-in.lovable.app/checkout" />
+        <meta property="og:title" content="Checkout | Aromas" />
+        <meta property="og:description" content="Review your cart and complete secure payment for your Sukh Sagar canteen order." />
+        <meta property="og:url" content="https://mobiledine-in.lovable.app/checkout" />
+        <meta property="og:type" content="website" />
+      </Helmet>
       <header className="sticky top-0 z-20 border-b border-border bg-background">
         <div className="container flex items-center gap-4 py-4">
           <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
