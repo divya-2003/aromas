@@ -178,6 +178,7 @@ const MenuPage = () => {
       {/* Cart Sheet */}
       <CartSheet isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </div>
+    </>
   );
 };
 
